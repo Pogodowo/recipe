@@ -3,9 +3,17 @@ from django.contrib.auth.models import User
 
 class Receptura (models.Model):
     rodzaje=(('1','Maść'),('2','czopki i globulki'),('3','receptura płynna'))
+    czop_czy_glob=(('1','czopki'),('2','globulki'))
+    tak_czy_nie = (('1', 'tak'), ('2', 'nie'))
     nazwa=models.CharField( max_length=30)
     date=models.DateTimeField(auto_now_add=True)
     rodzaj=models.TextField(choices=rodzaje,blank=True, null=True)
+    czopki_czy_globulk=models.TextField(choices=czop_czy_glob, blank=True, null=True)
+    ilosc_czop_glob = models.CharField(max_length=40, blank=True, null=True, default='')
+    masa_docelowa_czop_glob = models.CharField(max_length=40, blank=True, null=True, default='')
+    czy_ilosc_oleum_pomnozyc =models.TextField(choices=czop_czy_glob, blank=True, null=True)
+    ilosc_masci =models.CharField(max_length=40, blank=True, null=True, default='')
+    ilosc_gramow = models.CharField(max_length=40, blank=True, null=True, default='')
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return self.nazwa
@@ -33,5 +41,10 @@ class Skladnik(models.Model):
     aa_ad_gramy = models.CharField(max_length=40, default='')
     show=models.BooleanField(default=True)
     dodaj_wode = models.CharField(max_length=20, default='off')
+    pozadane_stezenie = models.CharField(max_length=40, blank=True,null=True,default='')
+    uzyte_stezenie = models.CharField(max_length=40, blank=True,null=True,default='')
+    ilosc_etanolu = models.CharField(max_length=40, blank=True,null=True,default='')
+    ilosc_wody_do_etanolu = models.CharField(max_length=40, blank=True,null=True,default='')
+
     def __str__(self):
         return self.skladnik

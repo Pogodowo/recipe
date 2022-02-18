@@ -1,24 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 
 <body>
-{% extends 'base.html' %}
+
 
 {% block content %}
 dodaj recepturę
-<form action="dodajrec" method="post">
-    {% csrf_token %}
-{% for i in form %}
- {{ i }}
-    <br><br>
-{% endfor %}
-    <input type="submit" value="Submit">
+<!--<form action="dodajrec" method="post">-->
+<!--    {% csrf_token %}-->
+<!--{% for i in form %}-->
+<!-- {{ i.label }}-->
+<!-- {{ i }}-->
+<!--    <br><br>-->
+<!--{% endfor %}-->
+
+<!--    <input type="submit" value="Submit">-->
+<!--</form>-->
+
+
+<!--<div id="okejos">Okejos</div>-->
+<br><br><br><br><br><br>
+<div class="form-body">
+    <div class="title">
+      Podaj dane recepty
+    </div>
+<form id="form-rec" class="form-form" method="POST" >
+              {% csrf_token %}
+
+              <br>
+
+          </form>
+ <input type="submit" id='dodajRecSubmit' class='btn btn-primary' value="Dodaj recepturę">
+<script src="{% static 'nowarec.js' %}"> </script>
+</div>
+
+
+
+
 
 {% endblock %}
-</form>
+
 </body>
 </html>

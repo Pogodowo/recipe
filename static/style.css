@@ -59,3 +59,109 @@ width:180px;
 display:inline;
 float:left;
 }
+
+
+.flex-container{
+
+display:flex;
+flex-direction: row;
+flex-wrap: wrap;
+float:left;
+border-radius:0px;
+background: #545794;
+}
+
+.flex-item{
+background: #bcc77f;
+margin:5px;
+color: black;
+margin: 2px;
+padding:6px;
+border-radius:5px;
+font-size: 20px;
+flex-wrap: nowrap;
+display:inline;
+float:center;
+}
+
+.card-css{
+background: #afb39d;
+width: 40rem;
+border-radius:0px;
+
+}
+
+.cont{
+border: 2px solid;
+width:250px;
+}
+
+.form-body{
+background: #adbfa4;
+max-width: 500px;
+width: 100%;
+margin: 20px auto;
+padding: 30px;
+box-shadow : 1px 1px 1px rgba(0,0,0,0.125);
+line-heigth: 1.5;
+}
+
+
+.form-body .title{
+font-size: 24px;
+font-weight: 700;
+margin-bottom: 25px;
+color:#3b4038;
+text-transform: uppercase;
+text-align: center;
+}
+
+.form-body .form-form{
+width:100%;
+}
+
+.form-body .form-form .input-field{
+margin-bottom: 5px;
+display: flex;
+allign-items: center;
+}
+
+.form-body .form-form .input-field label{
+width: 200px;
+margin=right: 10px;
+}
+
+.form-body .form-form .input-field input{
+width: 50%;
+outline: none;
+border : 1px solid #474f43;
+fonti-size: 25px;
+padding: 8px 10px;
+border-radius: 5px;
+transition: all 0.3s ease;
+
+}
+.form-body .form-form .input-field .select-field{
+position: relative;
+width: 50%;
+heigth: 30px;
+}
+
+.form-body .form-form .input-field select:select{
+border: 2px solid black;
+background: black;
+}
+
+.form-body .form-form .input-field select:before{
+content: '';
+position: absolute;
+border: 8px solid;
+border-color: red tranparent tranparent tranparent;
+border: 2px solid black;
+background: black;
+
+}
+
+.form-body .form-form .input-field input:focus,
+.form-body .form-form .input-field select:focus{
+border: 1px solid yellow;}

@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +7,7 @@
     <title>Title</title>
 </head>
 <body>
-{% extends 'base.html' %}
+
 
 {% block content %}
 receptura
@@ -34,9 +36,15 @@ receptura
         <div class="col">
             <div id='cards' class="red mt-5">siemka</div>
         </div>
+        <div class="row" >
+            <div class="col">
+                <div id='parametry' class="red mt-5">parametry</div>
+            </div>
+        </div>
 
     </div>
 </div>
+
 
 
 <!--modal-->
@@ -58,11 +66,12 @@ receptura
           <form id="modal-form" method="POST">
               {% csrf_token %}
 
-
               <br>
           </form>
       </div>
       <div class="modal-footer">
+          <button type="submit" id="zapiszzmianybutton"  class="btn btn-primary">Zapisz</button>
+        <button type="submit" id="edytujjsklbutton"  class="btn btn-primary">Edytuj składnik</button>
         <button type="submit" id="dodajsklbutton"  class="btn btn-primary">Dodaj składnik</button>
         <button type="button" id='close-button' class="btn btn-secondary" data-dismiss="modal">Close</button>
 
@@ -70,6 +79,9 @@ receptura
     </div>
   </div>
 </div>
+
+
+<script src="{% static 'myjs.js' %}"> </script>
 {% endblock  %}
 </body>
 </html>

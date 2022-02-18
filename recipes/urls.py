@@ -15,6 +15,15 @@ urlpatterns = [
     #path('receptura/dodajskl', views.dodajsklJson, name='dodajsklJson'),`aktualizujTabela/${sklId}/`
     path('receptura/aktualizujTabela/<str:sklId>/', views.aktualizujTabela, name='aktualizujTabela'),
     path('receptura/delSkl/<int:id>/', views.delSkl, name='delSkl'),
+    path('receptura/editFormJson/<str:skl>/', views.editFormJson, name='editformJson'),
+    path('receptura/edytujskl/<str:sklId>/', views.edytujsklJson, name='edytujsklJson'),
+    path('receptura/slownik/', views.slownikJson, name='slownikJson'),
+    path('dodajRecForm/', views.dodajRecForm, name='dodajRecForm'),
+    path('dodawanieRecJson/', views.dodawanieRecJson, name='dodawanieRecJson'),
+    path('usunRec/<str:id>/', views.usunRec, name='usunRec'),
+
+
+
 
 
 ]
