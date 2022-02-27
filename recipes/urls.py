@@ -21,6 +21,7 @@ urlpatterns = [
     path('dodajRecForm/', views.dodajRecForm, name='dodajRecForm'),
     path('dodawanieRecJson/', views.dodawanieRecJson, name='dodawanieRecJson'),
     path('usunRec/<str:id>/', views.usunRec, name='usunRec'),
+    path('receptura/paramRec/<str:recId>/', views.ParamRecJson, name='ParamRecJson'),
 
 
 

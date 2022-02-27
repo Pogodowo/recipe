@@ -10,37 +10,36 @@
 
 
 {% block content %}
-receptura
-{{ receptura.nazwa }}
 
-<div id="pk-box">
-    {{receptura.pk}}
-</div>
+
 <div class="container">
+    <div class="row" >
+            <div class="col">
+                <div id='parametry' class="red mt-5"></div>
+            </div>
+        </div>
     <div class="row">
         <div class="col">
         <form autocomplete="off" class="mt-5">
           <div class="autocomplete" style="width:300px;">
             <input id="myInput" type="text" name="myCountry" placeholder="Country" class="custom-input">
           </div>
-
         </form>
         <button type="submit" class="btn btn-secondary mt-1 " id="submitButton" > Nowy button</button>
-            </div>
-    </div>
-    <div class="row">
-        <div class="col">
          <div id="tabela-docelowa" class="mt-5"></div>
-        </div>
+            </div>
 
         <div class="col">
             <div id='cards' class="red mt-5">siemka</div>
         </div>
-        <div class="row" >
-            <div class="col">
-                <div id='parametry' class="red mt-5">parametry</div>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col">
+
         </div>
+
+
+
 
     </div>
 </div>
@@ -80,7 +79,9 @@ receptura
   </div>
 </div>
 
-
+<div id="pk-box">
+    {{receptura.pk}}
+</div>
 <script src="{% static 'myjs.js' %}"> </script>
 {% endblock  %}
 </body>

@@ -1,6 +1,6 @@
 from .tabela_etanolowa import tabela_etanolowa
-from .models import Skladnik
-
+from .models import Skladnik,Receptura
+import sys
 def Przeliczanie(skladnik,pk):
     ret={}
 
@@ -15,6 +15,8 @@ def Przeliczanie(skladnik,pk):
             ilosc_wody=float(float(ilosc_etanolu_z_rec)-ilosc_etanolu)
             ret["ilosc_etanolu"]=str(round(ilosc_etanolu,2))
             ret["ilosc_wody_do_etanolu"] = str(round(ilosc_wody,2))
+
     return ret
+
 
 

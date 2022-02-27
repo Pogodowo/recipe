@@ -26,12 +26,11 @@ edytujSkladnikButton.style.visibility = "hidden"
 const zapiszZmianyButton=document.getElementById("zapiszzmianybutton")
 zapiszZmianyButton.style.visibility = "hidden"
 parametryRecBox=document.getElementById('parametry')
-
-
 console.log('csrf',csrf)
 
+updateTable()
 
-var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol"]
+var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol","Oleum Cacao"]
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -186,7 +185,7 @@ function generowanieFormularza (){
            console.log('elementyForm z gen form',elementyForm)
            if (elementyForm!="ten składnik już został dodany"){
             elementyForm.map(item=>{
-            if(Array.isArray(item)){if (item[0]==='producent'){
+            if(Array.isArray(item)){if (item[0]==='producent' ||item[0]==='gestosc'){
                 console.log('mamy tabelę');
                 const label=document.createElement('label')
                 label.textContent=item[0]
@@ -236,7 +235,7 @@ function generowanieFormularza (){
                 }
             }else{
 
-            if (['aa','aa_ad','dodaj_wode','ad'].includes(item)){
+            if (['aa','aa_ad','dodaj_wode','ad','qs'].includes(item)){
             const label=document.createElement('label')
             label.textContent=item
             const check = document.createElement("input");
@@ -351,25 +350,67 @@ function dodawanieSkl(){
 ////////////////////////////////////////////////////////////
 ////////funkcja z ajaxem do aktualizacji taveli///////
 function updateTable(){
+         tabelaDocelowa.innerHTML='';
+
          $.ajax({
             type: 'GET',
             url:`aktualizujTabela/${sklId}/`,
             success : function(response){
+            parametryRecBox.innerHTML='';
             console.log('Sukces ajaxa z tabelą', response);
             let elementyTabeli=response.tabela_zbiorcza
             console.log('elementyTabeli', response.tabela_zbiorcza)
+            param=elementyTabeli.parametry.fields
+            slownik=elementyTabeli.slownik
+            elementyTabeli=elementyTabeli.objects
+            console.log('param',param)
+            console.log('slownik',slownik)
 
+            ////////////////test/////////////////////////////
+            card=document.createElement('div')
+            card.setAttribute('class','card paramcard-css')
+          //card.setAttribute('style','width: 36rem;')
+
+            var ul=document.createElement('ul')
+            ul.setAttribute('class','list-group list-group-flush')
+            var li=document.createElement('li')
+            li.setAttribute('class','list-group-item')
+            li.innerHTML='dupa'
+            ul.appendChild(li)
+            var li2=document.createElement('li')
+            //li2.classList.add( 'li-inline');
+             li2.setAttribute('class','flex-containerparam')
+         //li2.setAttribute('class','li-inline')
+
+        /////////wypisywanie atrybutów danego składnika/////
+
+
+        for (const [key, value] of Object.entries(param)){ if ( value!=null && value!='0' && value!=''){
+               const div=document.createElement('div')
+                  div.setAttribute('class','flex-item')
+                  if (key in slownik){console.log('jest w słowniku')
+                  div.innerHTML+=' '+slownik[key]+': '
+                  div.innerHTML+=value}else{
+                  div.innerHTML+=' '+key+': '
+                  div.innerHTML+=value}
+             if (key==='nazwa' || key==='date' ){li.appendChild(div)}else{
+             li2.appendChild(div)}
+                                                    }}
+        ///////////////////////////////////////////////////
+
+        ul.appendChild(li2)
+        card.appendChild(ul)
+        parametryRecBox.appendChild(card)
+
+            ////////////////koniec testu//////////////////////////////
             //let tabelaDocelowa=document.getElementById("tabela-docelowa");
-            tabelaDocelowa.innerHTML='';
+            tabelaDocelowa.innerHTML=''
             cardBox.innerHTML=''
+            div=document.createElement('div')
+            div.innerHTML='Rp. <br><br>'
+            tabelaDocelowa.appendChild(div)
             var numElem=1
-            $.ajax({
-            type: 'GET',
-            url: 'slownik/',
-            success : function(response){
-            console.log('succes spobrania do forma', response);
-            var slownik=response.table_dict
-
+            if (elementyTabeli!=null){
             elementyTabeli.map(item=>{
             console.log('itemTabeli',item.fields.skladnik);
             const div=document.createElement('div')
@@ -393,11 +434,13 @@ function updateTable(){
             if (item.fields.skladnik==='Etanol'){div.innerHTML+=item.fields.pozadane_stezenie+'° '}
             if (item.fields.aa==='on'){div.innerHTML+='aa '}
             else if(item.fields.aa_ad==='on'){div.innerHTML+='aa ad '}
+            else if(item.fields.qs==='on'){div.innerHTML+='qs '}
             if (item.fields.ilosc_na_recepcie!=='') {div.innerHTML+=+item.fields.ilosc_na_recepcie}
             console.log('div',div);
             div.appendChild(deleteButton);
             tabelaDocelowa.appendChild(div);
             }
+
 
 
             //div.innerHTML+='<br>'
@@ -445,10 +488,17 @@ function updateTable(){
             //////////////////////////////////////////////
 
 
-            })
-            },
-            error : function (error){console.log('error')},
-            })
+            })}
+            if (param['rodzaj']==='czopki_i_globulki' & param["czopki_czy_globulk"]==='czopki'){
+            div=document.createElement('div');
+            div.innerHTML='<br><br>M.f. supp. anal. D.t.d. No '+param['ilosc_czop_glob'];
+            tabelaDocelowa.appendChild(div)
+            }else{if (param['rodzaj']==='czopki_i_globulki' & param["czopki_czy_globulk"]==='globulki'){
+            div=document.createElement('div');
+            div.innerHTML='<br><br>M.f. glob. vag. D.t.d. No '+param['ilosc_czop_glob'];
+            tabelaDocelowa.appendChild(div)
+            }}
+
 
             },
             error : function (error){console.log('error')},
@@ -495,7 +545,7 @@ function generowanieFormularzaDoEdycji (){
             url: `editFormJson/${skl}&${sklId}/`,
             success : function(response){
             console.log('succes spobrania do forma', response);
-            var elementyForm = response.formData.datadict.form
+            var elementyForm = response.datadict.form
            console.log('elementyForm z gen form',elementyForm)
 
             elementyForm.map(item=>{
@@ -549,7 +599,7 @@ function generowanieFormularzaDoEdycji (){
                 }
             }else{
 
-            if (['aa','aa_ad','dodaj wodę'].includes(item)){
+            if (['aa','aa_ad','dodaj wodę','ad','qs'].includes(item)){
             const label=document.createElement('label')
             label.textContent=item
             const check = document.createElement("input");
@@ -606,8 +656,8 @@ function edytowanieSkl(){
             url: `editFormJson/${skl}&${sklId}/`,
             success : function(response){
             console.log('succes spobrania do forma', response);
-            var elementyForm = response.formData.datadict
-            var dict=response.formData.table_dict
+            var elementyForm = response.datadict
+            var dict=response.table_dict
             console.log('wczesne elementy form',elementyForm)
 
                 const checkButtons = document.getElementsByName('checkBox')

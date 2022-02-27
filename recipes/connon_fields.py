@@ -1,5 +1,5 @@
 fields={'common':['nazwa',['rodzaj','masc','czopki_i_globulki','receptura_plynna']],
-        'czopki_i_globulki':[['czopki_czy_globulki','czopki','globulki'],
+        'czopki_i_globulki':[['czopki_czy_globulk','czopki','globulki'],
         'ilosc_czop_glob','masa_docelowa_czop_glob',['czy_ilosc_oleum_pomnozyc','tak','nie']],
         'masc':['ilość maści'],
         'receptura_plynna':['ilość_gramow'], 'slownik':{'jednostka_z_recepty':'jednostka z recepty','ilosc_na_recepcie':'ilość na recepcie','gramy':'ilośc gramów','pozadane_stezenie':'pożądane stężenie etanolu v/v'

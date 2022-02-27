@@ -138,7 +138,7 @@ function generowanieFormularzaRecepty (){
           var szczegForm=response.fields[rodzaj]
           console.log('szczegForm',szczegForm)
           szczegForm.map(item=>{
-            if(Array.isArray(item)){if (item[0]==='producent'){
+            if(Array.isArray(item)){if (['czopki_czy_globulk','ilosc_czop_glob','rodzaj',].includes(item)){
                 console.log('mamy tabelę');
                 const label=document.createElement('label')
                 label.textContent=slownik[item[0]]
@@ -247,6 +247,7 @@ function dodawanieSkl(){
                 dataf={'csrfmiddlewaretoken': csrf[0].value,}
 
                 var elements = document.getElementById("form-rec").elements;
+                console.log('elements',elements)
                 for (var i = 0, element; element = elements[i++];) {
                 if (element){
                 console.log("mamy element");
