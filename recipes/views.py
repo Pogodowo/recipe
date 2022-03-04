@@ -107,8 +107,25 @@ def dodajsklJson (request,sklId):
         dodanySkladnik=request.POST.get("skladnik")
         receptura=Receptura.objects.get(id=int(sklId))
         ilosc=request.POST.get("ilosc_na_recepcie")
+        all = Skladnik.objects.filter(receptura_id=int(sklId))
+        ###########sprawdzanie czy jest woda################
+        jestwoda=None
+        woda = False
+        for i in all:
+            if i.skladnik == 'Woda destylowana':
+                woda = True
+                jestwoda = i
+        ################################################################################
+        if dodanySkladnik=='Woda destylowana':
+            if woda==False:
+                new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
+                                                  ilosc_na_recepcie=ilosc)
+            else:
+                jestwoda.show=True
+                jestwoda.save()
 
-        new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc)
+        else:
+            new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc)
 
 
         to_updade={'skladnik' :new_skl.skladnik, 'jednostka_z_recepty':new_skl.jednostka_z_recepty}
@@ -137,7 +154,7 @@ def dodajsklJson (request,sklId):
         #=================przelicanie witamin======================================
         print('new_skl.skladnik',new_skl.skladnik)
         sys.stdout.flush()
-        if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E':
+        if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
            to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
            print('to_update', to_updade,'to_updade,rodzaj,ilosc',receptura.rodzaj,receptura.ilosc_czop_glob)
            sys.stdout.flush()
@@ -157,6 +174,7 @@ def aktualizujTabela (request,sklId):
         all = Skladnik.objects.filter(receptura_id=int(sklId))
         jestwoda = None
     ################sprawdzanie czy jest woda i mocznik################################
+        mocznikObj=None
         woda = False
         for i in all:
             if i.skladnik=='Woda destylowana':
@@ -171,6 +189,7 @@ def aktualizujTabela (request,sklId):
             if i.skladnik=='Mocznik':
                 mocznik =True
                 ilosc_mocznika=i.gramy
+                mocznikObj=i
                 if i.dodaj_wode=='on':
                     czy_woda_do_mocznika = True
         print('mocznik', mocznik)
@@ -289,7 +308,9 @@ def aktualizujTabela (request,sklId):
         #########################uwzględnianie mocznika i wody##############################
         receptura = Receptura.objects.get(id=int(sklId))
         if mocznik==True and woda ==False and czy_woda_do_mocznika == True and ilosc_mocznika !='':
-            Skladnik.objects.create(skladnik='Woda destylowana',receptura_id=receptura,show=False,gramy=(str(int(ilosc_mocznika)*1.5)))
+            Skladnik.objects.create(skladnik='Woda destylowana',receptura_id=receptura,show=False,gramy=(str(int(ilosc_mocznika)*1.5)),woda_mocznik=(str(int(ilosc_mocznika)*1.5)))
+            mocznikObj.woda_mocznik=(str(int(ilosc_mocznika)*1.5))
+            mocznikObj.save()
         elif mocznik==True and woda ==True and czy_woda_do_mocznika == True and ilosc_mocznika !='':
             if jestwoda.gramy<(str(int(ilosc_mocznika)*1.5)):
                 jestwoda.gramy=(str(int(ilosc_mocznika)*1.5))
@@ -407,7 +428,7 @@ def edytujsklJson (request,sklId):
                 # if 'dodaj_wode' in to_updade:
                 #     to_updade['aa_ad_gramy']=to_updade['gramy']
                 # to_updade=Przeliczanie(dodanySkladnik,to_updade)
-                if to_edit['skladnik'] == 'witamina A' or to_edit['skladnik'] == 'witamina E':
+                if to_edit['skladnik'] == 'witamina A' or to_edit['skladnik'] == 'witamina E' or to_edit['skladnik'] == 'Oleum Menthae piperitae' or to_edit['skladnik'] == 'Nystatyna':
                     to_edit = PrzeliczanieWit(to_edit['skladnik'], to_edit, receptura.rodzaj, receptura.ilosc_czop_glob)
                     print('to_edit', to_edit, 'to_updade,rodzaj,ilosc', 'receptura',sklreceptury, receptura.rodzaj, receptura.ilosc_czop_glob)
                     sys.stdout.flush()

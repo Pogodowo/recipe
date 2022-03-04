@@ -38,10 +38,56 @@ def PrzeliczanieWit(dodanySkladnik,to_updade,rodzaj,ilosc):
                 to_updade['jednostki'] = str(round(float(to_updade['ilosc_na_recepcie']) / 28 * 50000, 3))
                 to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 280, 3))
                 to_updade['gramy'] = str(round((float(to_updade['ilosc_na_recepcie']) / 28) * float(to_updade['gestosc']), 3))
+    elif dodanySkladnik == 'Oleum Menthae piperitae':
+        if to_updade['jednostka_z_recepty']=='gramy':#'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 51, 3))
+                to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['gestosc'])), 3))
+        elif to_updade['jednostka_z_recepty']=='krople':#'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
+                to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']) * 0.019, 3))
+                to_updade['mililitry'] = str(round((float(to_updade['ilosc_na_recepcie'])*0.019) / (float(to_updade['gestosc'])), 3))
+    elif dodanySkladnik=='witamina E':#to_update {'skladnik': 'witamina A', 'jednostka_z_recepty': 'solutio', 'ilosc_na_recepcie': '3', 'producent': 'Hasco 4500j.m./ml', 'gestosc': '1.082'}
+        if to_updade['jednostka_z_recepty']=='solutio':#'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
+            to_updade['opakowania']=str(round(float(to_updade['ilosc_na_recepcie'])/(float(to_updade['gestosc'])*10),3))
+            to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']) * 0.3, 3))
+            if to_updade['producent']=='Hasco 0,3g/ml':
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['gestosc']))*30, 3))
+                to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['gestosc'])), 3))
+            elif to_updade['producent']=='Medana 0,3g/ml':
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['gestosc'])) * 27, 3))
+                to_updade['mililitry']= str(round(float(to_updade['ilosc_na_recepcie'])/(float(to_updade['gestosc'])),3))
+        elif to_updade['jednostka_z_recepty'] == 'gramy':
+            to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / 0.3, 3))
+            to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']), 3))
+            to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 3.0, 3))
+            to_updade['solutio'] = str(round((float(to_updade['ilosc_na_recepcie']) / 0.3) * float(to_updade['gestosc']), 3))
+            if to_updade['producent'] == 'Hasco 0,3g/ml':
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 0.3 * 30, 3))
+            elif to_updade['producent'] == 'Medana 0,3g/ml':
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 0.3 * 27, 3))
+        elif to_updade['jednostka_z_recepty'] == 'krople':
+            to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']), 3))
+            if to_updade['producent'] == 'Hasco 0,3g/ml':
+                to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / 30, 3))
+                to_updade['solutio'] = str(round((float(to_updade['ilosc_na_recepcie']) / 30)*float(to_updade['gestosc']), 3))
+                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 300, 3))
+                to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']) / 90, 3))
+            elif to_updade['producent'] == 'Medana 0,3g/ml':
+                to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / 27, 3))
+                to_updade['solutio'] = str(round((float(to_updade['ilosc_na_recepcie']) / 27) * float(to_updade['gestosc']), 3))
+                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 270, 3))
+                to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']) / 81, 3))
+    if dodanySkladnik == 'Nystatyna':
+        if to_updade['jednostka_z_recepty'] == 'jednostki/mg':
+            to_updade['gramy']=str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['UI_w_mg'])*1000), 3))
     if rodzaj == 'czopki_i_globulki':
-        to_updade['krople']=str(round(float(to_updade['krople'])*float(ilosc),3))
-        to_updade['mililitry'] = str(round(float(to_updade['mililitry']) * float(ilosc), 3))
-        to_updade['opakowania'] = str(round(float(to_updade['opakowania']) * float(ilosc), 3))
-        to_updade['jednostki'] = str(round(float(to_updade['jednostki']) * float(ilosc), 3))
-        to_updade['gramy'] = str(round(float(to_updade['gramy']) * float(ilosc), 3))
+        if 'krople' in to_updade:
+            to_updade['krople']=str(round(float(to_updade['krople'])*float(ilosc),3))
+        if 'mililitry' in to_updade:
+            to_updade['mililitry'] = str(round(float(to_updade['mililitry']) * float(ilosc), 3))
+        if 'opakowania' in to_updade:
+            to_updade['opakowania'] = str(round(float(to_updade['opakowania']) * float(ilosc), 3))
+        if 'jednostki' in to_updade:
+            to_updade['jednostki'] = str(round(float(to_updade['jednostki']) * float(ilosc), 3))
+        if 'gramy' in to_updade:
+            to_updade['gramy'] = str(round(float(to_updade['gramy']) * float(ilosc), 3))
     return to_updade

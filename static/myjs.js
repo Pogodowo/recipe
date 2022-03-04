@@ -30,7 +30,7 @@ console.log('csrf',csrf)
 
 updateTable()
 
-var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol","Oleum Cacao"]
+var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol","Oleum Cacao",'Oleum Menthae piperitae','Nystatyna']
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -151,21 +151,7 @@ function usuwanieSkladnika (pk){
 
 }
 
-//function listaElemForm(){
-//            skl=inputBox.value;
-//            $.ajax({
-//            type: 'GET',
-//            url: `formJson/${ skl }/`,
-//            success : function(response){
-//            console.log('succes spobrania do forma', response);
-//            var elementyForm = response.datadict
-//            console.log('wczesne elementy form',elementyForm)
-//
-//            },
-//            error : function (response){
-//            console.log('error', error)}
-//            })
-//            }
+
 
 
 function generowanieFormularza (){

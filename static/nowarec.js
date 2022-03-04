@@ -63,7 +63,7 @@ function generowanieFormularzaRecepty (){
                 label.textContent=slownik[item[0]]
                 //label.setAttribute('class','elFormDelete');
                 const br=document.createElement('br')
-                //br.setAttribute('class','elFormDelete')
+                br.setAttribute('class','elFormDelete')
                 const select=document.createElement('select');
                 select.setAttribute('class',"ui dropdown select-field");
                 //select.setAttribute('id',"optionId");
@@ -113,7 +113,7 @@ function generowanieFormularzaRecepty (){
             input.setAttribute('id',`${item}`)
             console.log('idwimpucie',`${item}`)
             const br=document.createElement('br')
-//            br.setAttribute('class','elFormDelete')
+            br.setAttribute('class','elFormDelete')
 
             div.appendChild(label)
             div.appendChild(input)

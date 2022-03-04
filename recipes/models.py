@@ -27,6 +27,7 @@ class Skladnik(models.Model):
     ilosc_na_recepcie = models.CharField(max_length=40, blank=True,null=True,default='0')
     gramy = models.CharField(max_length=40, default='0')
     mililitry = models.CharField(max_length=40, default='0')
+    solutio = models.CharField(max_length=40, default='0')
     krople = models.CharField(max_length=40, default='0')
     opakowania = models.CharField(max_length=40, default='0')
     jednostki = models.CharField(max_length=40, default='0')
@@ -49,6 +50,10 @@ class Skladnik(models.Model):
     qs = models.CharField(max_length=20, default='off')
     ad = models.CharField(max_length=20, default='off')
     woda_mocznik=models.CharField(max_length=40, default='0')
+    UI_w_mg = models.CharField(max_length=40, default='0')
 
     def __str__(self):
         return self.skladnik
+
+
+    
