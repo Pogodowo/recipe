@@ -14,6 +14,7 @@ urlpatterns = [
     path('receptura/dodajskl/<str:sklId>/', views.dodajsklJson, name='dodajsklJson'),
     #path('receptura/dodajskl', views.dodajsklJson, name='dodajsklJson'),`aktualizujTabela/${sklId}/`
     path('receptura/aktualizujTabela/<str:sklId>/', views.aktualizujTabela, name='aktualizujTabela'),
+    path('spisSkl/<str:sklId>/', views.aktualizujTabela, name='spisSkl'),
     path('receptura/delSkl/<int:id>/', views.delSkl, name='delSkl'),
     path('receptura/editFormJson/<str:skl>/', views.editFormJson, name='editformJson'),
     path('receptura/edytujskl/<str:sklId>/', views.edytujsklJson, name='edytujsklJson'),

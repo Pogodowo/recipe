@@ -71,6 +71,8 @@ border-radius:0px;
 background: #545794;
 }
 
+
+
 .flex-item{
 background: #bcc77f;
 margin:5px;
@@ -91,10 +93,7 @@ border-radius:0px;
 
 }
 
-.cont{
-border: 2px solid;
-width:250px;
-}
+
 
 .form-body{
 background: #adbfa4;
@@ -129,14 +128,15 @@ allign-items: center;
 .form-body .form-form .input-field label{
 width: 200px;
 margin=right: 10px;
+allign: center;
 }
 
 .form-body .form-form .input-field input{
 width: 50%;
 outline: none;
 border : 1px solid #474f43;
-fonti-size: 25px;
-padding: 8px 10px;
+fonti-size: 15px;
+padding: 8px 5px;
 border-radius: 5px;
 transition: all 0.3s ease;
 
@@ -167,9 +167,126 @@ background: black;
 border: 1px solid yellow;}
 
 .flex-containerparam{
-background: #325ea8;
+
 display:flex;
 flex-direction: row;
 flex-wrap: wrap;
 float:left;
-border-radius:0px;}
+border-radius:0px;
+border-style: double;
+
+}
+.flex-item-param{
+background: #d1c3ae;
+margin:5px;
+color: black;
+margin: 2px;
+padding:6px;
+border-radius:5px;
+font-size: 20px;
+flex-wrap: nowrap;
+display:inline;
+float:center;
+
+
+}
+
+.paramcard-css{
+
+}
+
+.button-card{
+float: right;
+margin: 2px;
+}
+
+.cards-rec-container {
+    margin: 0 auto;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+    grid-auto-rows: auto;
+    gap: 20px;
+    font-family: sans-serif;
+    padding-top: 30px;
+}
+
+.cards * {
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+
+
+.cont{
+  border: 2px solid #333333;
+  border-radius: 25px;
+  overflow: hidden;
+  text-align: center;
+  background: #03e8fc;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+}
+
+
+.card-header {
+
+
+
+}
+
+.card-sklad-rec {
+    line-height: 1.5;
+    height: 180px;
+    font-size: 0.9em;
+    overflow-y: scroll;
+    text-align: left;
+    scrollbar-width: thin;
+    scrollbar-color: #eb5234 #d8ede5;
+    padding: 15px;
+    background: #fafafa;
+
+}
+
+
+
+
+.card-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #555555;
+    background: #bbdaf2;
+    font-size: 1.2em;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+
+.form-body-add{
+background: #adbfa4;
+max-width: 500px;
+width: 100%;
+margin: 20px auto;
+padding: 30px;
+box-shadow : 1px 1px 1px rgba(0,0,0,0.125);
+line-heigth: 1.5;
+}
+
+
+
+.check-box{
+margin-right: 10px;
+margin-left: 2px;
+}
+
+.form-body-add .form-modal .input-field label{
+width: 200px;
+margin-right: 5px;
+padding: 6px;
+allign: center;
+}
+

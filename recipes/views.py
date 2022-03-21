@@ -104,64 +104,81 @@ def formJson (request,skl):
 
 def dodajsklJson (request,sklId):
     if request.is_ajax():
+        new_skl=None
         dodanySkladnik=request.POST.get("skladnik")
         receptura=Receptura.objects.get(id=int(sklId))
         ilosc=request.POST.get("ilosc_na_recepcie")
         all = Skladnik.objects.filter(receptura_id=int(sklId))
         ###########sprawdzanie czy jest woda################
-        jestwoda=None
-        woda = False
+        woda=None
+        jestwoda = False
         for i in all:
             if i.skladnik == 'Woda destylowana':
-                woda = True
-                jestwoda = i
+                jestwoda = True
+                woda = i
+        mocznik = None
+        jestmocznik = False
+        for i in all:
+            if i.skladnik == 'Mocznik':
+                jestmocznik = True
+                mocznik = i
         ################################################################################
         if dodanySkladnik=='Woda destylowana':
-            if woda==False:
+            if jestwoda==False:
                 new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
                                                   ilosc_na_recepcie=ilosc)
+
             else:
-                jestwoda.show=True
-                jestwoda.save()
+                woda.show=True
+                woda.ilosc_na_recepcie=ilosc
+
+                if jestmocznik==True and mocznik!=None:
+                    if mocznik.dodaj_wode=='on':
+                        if float(woda.ilosc_na_recepcie)<float(woda.woda_mocznik):
+                            woda.gramy=woda.mocznik
+                        else:
+                            woda.gramy=woda.ilosc_na_recepcie
+
+                woda.save()
 
         else:
             new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc)
 
+        if new_skl!=None:
+            to_updade={'skladnik' :new_skl.skladnik, 'jednostka_z_recepty':new_skl.jednostka_z_recepty}
+            for i in data[dodanySkladnik]:
+                if type(i)!=list:
+                    a=request.POST.get(str(i))
+                    to_updade[i]=a
+                else:
+                    a = request.POST.get(str(i[0]))
+                    to_updade[i[0]] = a
 
-        to_updade={'skladnik' :new_skl.skladnik, 'jednostka_z_recepty':new_skl.jednostka_z_recepty}
-        for i in data[dodanySkladnik]:
-            if type(i)!=list:
-                a=request.POST.get(str(i))
-                to_updade[i]=a
-            else:
-                a = request.POST.get(str(i[0]))
-                to_updade[i[0]] = a
-
-        #==========wstawianie gramów==========================
-        if to_updade['jednostka_z_recepty']=='gramy':
-            to_updade['gramy']=ilosc
-        if receptura.ilosc_czop_glob!='' and new_skl.ilosc_na_recepcie!='':
+            #==========wstawianie gramów==========================
             if to_updade['jednostka_z_recepty']=='gramy':
-                to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
-        #do wywalenia jak popraeię obliczenia witamin
-            elif to_updade['jednostka_z_recepty']=='solutio':
-                to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
+                to_updade['gramy']=ilosc
+            if receptura.ilosc_czop_glob!='' and new_skl.ilosc_na_recepcie!='':
+                if to_updade['jednostka_z_recepty']=='gramy':
+                    to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
+            #do wywalenia jak popraeię obliczenia witamin
+                elif to_updade['jednostka_z_recepty']=='solutio':
+                    to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
 
-        #=====================================================
-        if 'aa_ad' in to_updade:
-            to_updade['aa_ad_gramy']=to_updade['gramy']
+            #=====================================================
+            if 'aa_ad' in to_updade:
+                to_updade['aa_ad_gramy']=to_updade['gramy']
 
-        #=================przelicanie witamin======================================
-        print('new_skl.skladnik',new_skl.skladnik)
-        sys.stdout.flush()
-        if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
-           to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
-           print('to_update', to_updade,'to_updade,rodzaj,ilosc',receptura.rodzaj,receptura.ilosc_czop_glob)
-           sys.stdout.flush()
-        for key, value in to_updade.items():
-            setattr(new_skl, key, value)
-        new_skl.save()
-        return JsonResponse({'tabela':to_updade})
+            #=================przelicanie witamin======================================
+            print('new_skl.skladnik',new_skl.skladnik)
+            sys.stdout.flush()
+            if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
+               to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
+               print('to_update', to_updade,'to_updade,rodzaj,ilosc',receptura.rodzaj,receptura.ilosc_czop_glob)
+               sys.stdout.flush()
+            for key, value in to_updade.items():
+                setattr(new_skl, key, value)
+            new_skl.save()
+            return JsonResponse({'tabela':to_updade})
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
 
 
@@ -172,28 +189,19 @@ def aktualizujTabela (request,sklId):
         g = last.gramy
         l = last.pk
         all = Skladnik.objects.filter(receptura_id=int(sklId))
-        jestwoda = None
-    ################sprawdzanie czy jest woda i mocznik################################
-        mocznikObj=None
-        woda = False
+    ################sprawdzanie czy jest woda i roztw kwasu borowego################################
+        jest_roztw_kw=False
+        roztw_kw=None
+        woda = None
+        jestwoda = False
         for i in all:
-            if i.skladnik=='Woda destylowana':
-                woda =True
-                jestwoda=i
-        print('woda', woda)
-        sys.stdout.flush()
-        ilosc_mocznika=0
-        mocznik=False
-        czy_woda_do_mocznika=False
-        for i in all:
-            if i.skladnik=='Mocznik':
-                mocznik =True
-                ilosc_mocznika=i.gramy
-                mocznikObj=i
-                if i.dodaj_wode=='on':
-                    czy_woda_do_mocznika = True
-        print('mocznik', mocznik)
-        sys.stdout.flush()
+            if i.skladnik == 'Woda destylowana':
+                jestwoda = True
+                woda = i
+            elif i.skladnik=='3% roztwór kwas borowy':
+                jest_roztw_kw = True
+                roztw_kw = i
+
     ########################################################################################
         print('last', last)
         sys.stdout.flush()
@@ -307,24 +315,85 @@ def aktualizujTabela (request,sklId):
 
         #########################uwzględnianie mocznika i wody##############################
         receptura = Receptura.objects.get(id=int(sklId))
-        if mocznik==True and woda ==False and czy_woda_do_mocznika == True and ilosc_mocznika !='':
-            Skladnik.objects.create(skladnik='Woda destylowana',receptura_id=receptura,show=False,gramy=(str(int(ilosc_mocznika)*1.5)),woda_mocznik=(str(int(ilosc_mocznika)*1.5)))
-            mocznikObj.woda_mocznik=(str(int(ilosc_mocznika)*1.5))
-            mocznikObj.save()
-        elif mocznik==True and woda ==True and czy_woda_do_mocznika == True and ilosc_mocznika !='':
-            if jestwoda.gramy<(str(int(ilosc_mocznika)*1.5)):
-                jestwoda.gramy=(str(int(ilosc_mocznika)*1.5))
-                jestwoda.save()
+        print("last.receptura_id", last.receptura_id,'sklId',sklId)
+        sys.stdout.flush()
+        if last.skladnik=='Mocznik' and last.dodaj_wode=='on':
+            last.woda_mocznik=str(float(last.ilosc_na_recepcie)*1.5)
+            if jestwoda==True:
+                woda.woda_mocznik=last.woda_mocznik
+                woda.save()
+            elif jestwoda==False:
+                Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,woda_mocznik=last.woda_mocznik)
 
+            last.save()
+        #########################komponowanie roztworu kwasu bornego z kwasu i wody##############################
+
+        if last.skladnik=='3% roztwór kwas borowy' and last.czy_zlozyc_roztwor_ze_skladnikow_prostych=='on':
+            last.woda_kwas_borowy=str(float(last.ilosc_na_recepcie)-float(last.ilosc_na_recepcie)*0.03)
+            last.ilosc_kwasu_borowego_do_roztworu=str(float(last.ilosc_na_recepcie)*0.03)
+            last.gramy = str(float(last.ilosc_na_recepcie) * 0.03)
+            #last.show=False
+            if jestwoda==True:
+                woda.woda_kwas_borowy=last.woda_kwas_borowy
+                woda.save()
+            elif jestwoda==False:
+                Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,woda_kwas_borowy=last.woda_kwas_borowy,gramy=last.woda_kwas_borowy)
+                jestwoda = True
+                #Skladnik.objects.create(receptura_id=receptura, skladnik='Kwas borowy', show=False,woda_kwas_borowy=last.woda_kwas_borowy,gramy=str(float(last.ilosc_na_recepcie)*0.03))
+            last.save()
+        ##############usuwanie kwasu bornego po usunięciu roztworu penie ten fragment do wywalenia################################
+        print('lastTeraz',last.skladnik)
+        sys.stdout.flush()
+        if roztw_kw!=None and roztw_kw.czy_zlozyc_roztwor_ze_skladnikow_prostych == 'off' and jestwoda==True:
+            print('dupa  z tą wodą')
+            roztw_kw.woda_kwas_borowy='0'
+            roztw_kw.ilosc_kwasu_borowego_do_roztworu='0'
+            woda.woda_kwas_borowy='0'
+            roztw_kw.save()
+            woda.save()
+
+        jest_roztwor_kw_bor = False
+        kw_bor = None
+        for i in all:
+            if i.skladnik == 'Kwas borowy':
+                kw_bor = i
+            if i.skladnik == '3% roztwór kwas borowy':
+                jest_roztwor_kw_bor=True
+        # print("jest_roztwor_kw_bor == False", jest_roztwor_kw_bor == False, 'kw_bor != None', kw_bor != None,'kw_bor.show==False',kw_bor.show==False)
+        # sys.stdout.flush()
+        if jest_roztwor_kw_bor == False and   kw_bor != None:
+            if kw_bor.show==False:
+                kw_bor.delete()
         #####################obliczenia###################################################################
         keys=["ilosc_etanolu","ilosc_wody_do_etanolu"]
 
         if last.skladnik=='Etanol':
             to_updade = Przeliczanie(last.skladnik, last.pk)
+            print('to_update3',to_updade)
             last.ilosc_etanolu=to_updade["ilosc_etanolu"]
             last.ilosc_wody_do_etanolu=to_updade["ilosc_wody_do_etanolu"]
+            if jestwoda==True:
+                woda.ilosc_wody_do_etanolu=last.ilosc_wody_do_etanolu
+                woda.save()
+            elif jestwoda==False:
+                Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,ilosc_wody_do_etanolu=last.ilosc_wody_do_etanolu)
+
             last.save()
-        elif last.skladnik == 'Oleum Cacao':
+        ####################kasowanie wody jeżeli nic nie zawiera#################################################
+        #print( "jestwoda",jestwoda,"woda!=None",woda!=None,"woda.ilosc_na_recepcie=='0'",woda.ilosc_na_recepcie=='0', "woda.ilosc_wody_do_etanolu =='0'" ,woda.ilosc_wody_do_etanolu =='0'," woda.woda_mocznik=='0'", woda.woda_mocznik=='0', "woda.woda_kwas_borowy=='0'",woda.woda_kwas_borowy=='0')
+        if jestwoda==True and woda!=None:
+            print( "jestwoda",jestwoda,"woda!=None",woda!=None,"woda.ilosc_na_recepcie=='0'",woda.ilosc_na_recepcie=='0', "woda.ilosc_wody_do_etanolu =='0'" ,woda.ilosc_wody_do_etanolu =='0'," woda.woda_mocznik=='0'", woda.woda_mocznik=='0', "woda.woda_kwas_borowy=='0'",woda.woda_kwas_borowy=='0')
+            print('dupa  z tą wodą')
+            if woda.ilosc_na_recepcie=='0' and woda.ilosc_wody_do_etanolu =='0' and woda.woda_mocznik=='0'and woda.woda_kwas_borowy=='0':
+                woda.delete()
+                jestwoda=False
+                woda=None
+        ############################# sumowanie całkowitej ilości wody####################################
+        if jestwoda == True and woda != None:
+            #woda.calkowita_ilosc_gramow_wody
+            woda.gramy = str(float(woda.ilosc_na_recepcie) + float(woda.ilosc_wody_do_etanolu) + float(woda.woda_mocznik) + float(woda.woda_kwas_borowy))
+            woda.save()
+        if last.skladnik == 'Oleum Cacao':
             obiekt = Skladnik.objects.get(pk=last.pk)
             receptura = Receptura.objects.get(pk=obiekt.receptura_id.pk)
             print('receptura', receptura)
@@ -361,13 +430,33 @@ def delSkl (request,id):
     sys.stdout.flush()
     skl=Skladnik.objects.get(pk=id)
     all = Skladnik.objects.filter(receptura_id=skl.receptura_id)
+    ################sprawdzanie czy jest woda ################################
+    woda = None
+    jestwoda = False
     for i in all:
-        if skl.skladnik=='Mocznik' and i.skladnik == 'Woda destylowana' and i.show==False:
-            i.delete()
-        elif skl.skladnik=='Mocznik' and i.skladnik == 'Woda destylowana' and i.show==True:
-            i.gramy=i.ilosc_na_recepcie
-            i.save()
+        if i.skladnik == 'Woda destylowana':
+            jestwoda = True
+            woda = i
+    ########################################################################################
+    if skl.skladnik=='Mocznik':
+        if jestwoda==True and woda:
+            woda.woda_mocznik='0'
+            woda.save()
+    if skl.skladnik=='Etanol':
+        if jestwoda==True and woda:
+            woda.ilosc_wody_do_etanolu='0'
+            woda.save()
+    if skl.skladnik=='3% roztwór kwas borowy':
+        if jestwoda==True and woda:
+            woda.woda_kwas_borowy='0'
+            woda.save()
 
+    ####################################################################
+    if jestwoda == True and woda != None:
+        if woda.ilosc_na_recepcie == '0' and woda.ilosc_wody_do_etanolu == '0' and woda.woda_mocznik == '0' and woda.woda_kwas_borowy == '0':
+            woda.delete()
+
+    ####################################################################
     response=serializers.serialize("python", deletedElement)
     deletedElement.delete()
     print('response', response)

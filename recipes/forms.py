@@ -14,7 +14,7 @@ class CzopkiGlobulkiForm (ModelForm):
     class Meta:
         model = Receptura
         fields = ['nazwa', 'rodzaj',
-        'czopki_czy_globulk',
+        'czopki_czy_globulki',
         'ilosc_czop_glob' ,
         'masa_docelowa_czop_glob' ,
         'czy_ilosc_oleum_pomnozyc' ,]

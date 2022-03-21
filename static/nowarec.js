@@ -157,6 +157,7 @@ function generowanieFormularzaRecepty (){
                 console.log(item[0])
                 slicedArray.map(elem=>{
                 const option=document.createElement('option')
+                option.setAttribute('class','elFormDelete')
                 option.textContent = elem
                 optionBox.appendChild(option)
                 })}else{ console.log('tutaj będzie select z imputem');
@@ -164,7 +165,8 @@ function generowanieFormularzaRecepty (){
                 console.log('mamy tabelę');
                 const label=document.createElement('label');
                 const div=document.createElement('div')
-                div.setAttribute('class','input-field')
+                div.setAttribute('class','input-field elFormDelete')
+
                 label.textContent=slownik[item[0]]
                 label.setAttribute('class','elFormDelete');
                 const br=document.createElement('br')
@@ -185,6 +187,7 @@ function generowanieFormularzaRecepty (){
                 console.log(item[0])
                 slicedArray.map(elem=>{
                 const option=document.createElement('option')
+                option.setAttribute('class','elFormDelete')
                 option.textContent = slownik[elem]
                 optionBox.appendChild(option)
                 })}
@@ -209,7 +212,7 @@ function generowanieFormularzaRecepty (){
             } else
             {
             const div=document.createElement('div')
-            div.setAttribute('class','input-field')
+            div.setAttribute('class','input-field elFormDelete')
             const label=document.createElement('label')
             label.textContent=slownik[item]
             const input=document.createElement('input')

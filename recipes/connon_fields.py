@@ -1,8 +1,8 @@
-fields={'common':['nazwa',['rodzaj','masc','czopki_i_globulki','receptura_plynna']],
-        'czopki_i_globulki':[['czopki_czy_globulk','czopki','globulki'],
-        'ilosc_czop_glob','masa_docelowa_czop_glob',['czy_ilosc_oleum_pomnozyc','tak','nie']],
-        'masc':['ilość maści'],
-        'receptura_plynna':['ilość_gramow'], 'slownik':{'jednostka_z_recepty':'jednostka z recepty','ilosc_na_recepcie':'ilość na recepcie','gramy':'ilośc gramów','pozadane_stezenie':'pożądane stężenie etanolu v/v'
+fields={'common':['nazwa',['rodzaj','masc','czopki_i_globulki','receptura_plynna_wewnetrzna','receptura_plynna_zewnetrzna']],
+        'czopki_i_globulki':[['czopki_czy_globulki','czopki','globulki'],
+        'ilosc_czop_glob','masa_docelowa_czop_glob'],
+        'masc':'','receptura_plynna_wewnetrzna':'',
+        'receptura_plynna_zewnetrzna':'', 'slownik':{'jednostka_z_recepty':'jednostka z recepty','ilosc_na_recepcie':'ilość na recepcie','gramy':'ilośc gramów','pozadane_stezenie':'pożądane stężenie etanolu v/v'
         ,'uzyte_stezenie':'użyte stężenie etanolu','ilosc_etanolu':'ilość użytego etanolu',
         'czopki_czy_globulki':'czopki czy globulki','ilosc_czop_glob':'ilosc czopków lub globulek',
         'masa_docelowa_czop_glob':'masa docelowa czopka lub globulki',
