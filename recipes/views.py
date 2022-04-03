@@ -91,6 +91,11 @@ def formJson (request,skl):
     formData={}
     datadict=data[skl[:ind]]
     receptura =Skladnik.objects.filter(receptura_id=int(skl[ind+1:]))
+    last=receptura.last()
+    if  last.ad=='on' or last.aa_ad=='on':
+            datadict=['receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik ']
+
+
     for i in receptura:
         if i.skladnik ==skl[:ind] and i.show==True:
             datadict=['ten składnik już został dodany']
@@ -104,6 +109,7 @@ def formJson (request,skl):
 
 def dodajsklJson (request,sklId):
     if request.is_ajax():
+        previous_skl = Skladnik.objects.filter(receptura_id=int(sklId)).last()
         new_skl=None
         dodanySkladnik=request.POST.get("skladnik")
         receptura=Receptura.objects.get(id=int(sklId))
@@ -178,13 +184,30 @@ def dodajsklJson (request,sklId):
             for key, value in to_updade.items():
                 setattr(new_skl, key, value)
             new_skl.save()
+            #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
+            if previous_skl!=None and previous_skl.ilosc_na_recepcie == '' and previous_skl.show==True and new_skl.ad=='on':
+                new_skl.ad='off'
+                new_skl.aa_ad='on'
+                new_skl.save()
+
+
+
             return JsonResponse({'tabela':to_updade})
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
 
 
 
 def aktualizujTabela (request,sklId):
+    previous_skl=None
+    if len(Skladnik.objects.filter(receptura_id=int(sklId)))>1:
+        previous_skl = Skladnik.objects.filter(receptura_id=int(sklId)).order_by('-pk')[1]
     last=Skladnik.objects.filter(receptura_id=int(sklId)).last()
+    #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
+    if previous_skl != None and previous_skl.ilosc_na_recepcie == '' and previous_skl.show == True and last.ad == 'on':
+        last.ad = 'off'
+        last.aa_ad = 'on'
+        last.save()
+    ###########################################################################################################
     if last!=None:
         g = last.gramy
         l = last.pk
@@ -224,7 +247,10 @@ def aktualizujTabela (request,sklId):
             last.save()
         if last.aa == 'on':
             for el in all.order_by('-pk'):  # order_by('-pk')
-                if el.pk < l and el.gramy != "":
+                if el.pk < l and el.obey == last.obey:
+                    el.gramy = g
+                    el.save()
+                elif el.pk < l and el.gramy != "":
                     print('break')
                     break
                 else:
@@ -245,6 +271,8 @@ def aktualizujTabela (request,sklId):
                     el.obey = None
                     el.save()
         ########################################################################################
+
+
         ######################uwzględnianie ad#############################################
 
         if last.ad == 'on' and last.aa != 'on':
@@ -468,20 +496,40 @@ def editFormJson(request,skl):
     ind = skl.index('&')
     datadict = {'form':data[skl[:ind]],'values':{}}
     receptura = Skladnik.objects.filter(receptura_id=int(skl[ind + 1:]))
-    print('edycjareceptura',receptura)
-    sys.stdout.flush()
-    elmenty_do_imputa={}
+    lastEdit = Skladnik.objects.filter(receptura_id=int(skl[ind + 1:])).last().skladnik
+    lista_el_do_edycji=[]
+    if skl[:ind]!=lastEdit:
+        print('skl[:ind]!=lastEdit', skl[:ind]!=lastEdit)
+        sys.stdout.flush()
+        for i in data[skl[:ind]]:
+            print('i do edycji', i)
+            if i not in ['aa','ad','aa_ad','qs','dodaj_wode','czy_zlozyc_roztwor_ze_skladnikow_prostych']:
+                print('znalazłem')
+                lista_el_do_edycji.append(i)
+    else:
+        lista_el_do_edycji=data[skl[:ind]]
+    # for i in data[skl[:ind]]:
+    #     if i not in ['aa','ad','aa_ad']:
+    #         print('znalazłem')
+    #         lista_el_do_edycji.append(i)
+    datadict['form']=lista_el_do_edycji
+
+
+
     for i in receptura:
         if i.skladnik == skl[:ind] and i.show == True:
             print('znalazłem składnik',i)
             sys.stdout.flush()
-            for j in datadict['form']:
+            for j in lista_el_do_edycji:
+                print('j do edycji', j)
+                sys.stdout.flush()
                 if type(j)==list:
                     j=j[0]
                     datadict['values'][str(j)] = getattr(i, j)
                 else:
                     datadict['values'][str(j)] = getattr(i, j)
-
+    print('datadict', datadict)
+    sys.stdout.flush()
     context = {'datadict': datadict}
     return JsonResponse(context)
 
@@ -506,11 +554,12 @@ def edytujsklJson (request,sklId):
                     else:
                         a = request.POST.get(str(j[0]))
                         to_edit[j[0]] = a
-                print('to_update', to_edit)
+                print('to_edit', to_edit)
                 sys.stdout.flush()
                 # ==========wstawianie gramów==========================
                 if to_edit['jednostka_z_recepty'] == 'gramy':
                     to_edit['gramy'] = ilosc
+                    #to_edit['gramy'] = to_edit['ilosc_na_recepcie']
                 # =====================================================
                 if 'aa_ad' in to_edit:
                     to_edit['aa_ad_gramy'] = to_edit['gramy']

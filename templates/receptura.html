@@ -27,6 +27,8 @@
         </form>
         <button type="submit" class="btn btn-secondary mt-1 " id="submitButton" > Nowy button</button>
          <div id="tabela-docelowa" class="mt-5"></div>
+               <br><br>
+        <button class="btn btn-primary" id="toPdfButton" onclick="window.print();"> do Wydruku</button>
             </div>
 
         <div class="col">
@@ -82,6 +84,7 @@
 <div id="pk-box">
     {{receptura.pk}}
 </div>
+
 <script src="{% static 'myjs.js' %}"> </script>
 {% endblock  %}
 </body>

@@ -127,7 +127,7 @@ allign-items: center;
 
 .form-body .form-form .input-field label{
 width: 200px;
-margin=right: 10px;
+margin-right: 10px;
 allign: center;
 }
 
@@ -270,23 +270,30 @@ margin: 2px;
 background: #adbfa4;
 max-width: 500px;
 width: 100%;
-margin: 20px auto;
-padding: 30px;
+margin: 15px auto;
+padding: 20px;
 box-shadow : 1px 1px 1px rgba(0,0,0,0.125);
-line-heigth: 1.5;
+line-heigth: 1;
 }
 
-
+.check-box-label{
+padding: 0;
+margin-right: 1px;
+}
 
 .check-box{
 margin-right: 10px;
-margin-left: 2px;
+margin-left: 1px;
 }
 
-.form-body-add .form-modal .input-field label{
-width: 200px;
-margin-right: 5px;
-padding: 6px;
-allign: center;
+.form-body-add label{
+margin-right: 1px;
+padding: 5px;
+
 }
+
+.form-body-add select{
+background-color: #e4ede4;
+}
+
 

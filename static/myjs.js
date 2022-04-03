@@ -29,6 +29,7 @@ zapiszZmianyButton.style.visibility = "hidden"
 parametryRecBox=document.getElementById('parametry')
 const delCardButton=document.getElementById('button-del')
 const edCardButton=document.getElementById('button-ed')
+toPdfButton=document.getElementById("toPdfButton")
 console.log('csrf',csrf)
 
 updateTable()
@@ -185,46 +186,25 @@ function generowanieFormularza (){
             var elementyForm = response.formData.datadict
             var dict=response.formData.table_dict
            console.log('elementyForm z gen form',elementyForm)
-           if (elementyForm!="ten składnik już został dodany"){
+           if (elementyForm!="ten składnik już został dodany" & elementyForm!='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik '){
             elementyForm.map(item=>{
-            if(Array.isArray(item)){if (item[0]==='producent' ||item[0]==='gestosc'){
+            if(Array.isArray(item)){
                 console.log('mamy tabelę');
+                const div=document.createElement('div')
+                div.setAttribute('class', 'elFormDelete input-field-form')
                 const label=document.createElement('label')
-                label.textContent=item[0]
-                label.setAttribute('class','elFormDelete');
-                const select=document.createElement('select');
-                select.setAttribute('class',"ui dropdown");
-                //select.setAttribute('id',"optionId");
-                select.setAttribute('class','elFormDelete')
-                select.setAttribute('id',`${skl}-${item[0]}`)
-                console.log('idwimpucie',`${skl}-${item[0]}`)
-                formBox.appendChild(label)
-                formBox.appendChild(select)
-                //const optionBox= document.getElementById('optionId')
-                const optionBox= document.getElementById(`${skl}-${item[0]}`)
-                const slicedArray=item.slice(1)
-                console.log(item[0])
-                slicedArray.map(elem=>{
-                const option=document.createElement('option')
-                option.textContent = elem
-                optionBox.appendChild(option)
-                })}else{ console.log('tutaj będzie select z imputem');
-                {
-                console.log('mamy tabelę');
-                const label=document.createElement('label');
                 label.textContent=dict[item[0]]
                 label.setAttribute('class','elFormDelete');
-                const br=document.createElement('br')
-                br.setAttribute('class','elFormDelete')
                 const select=document.createElement('select');
                 select.setAttribute('class',"ui dropdown");
                 //select.setAttribute('id',"optionId");
                 select.setAttribute('class','elFormDelete')
                 select.setAttribute('id',`${skl}-${item[0]}`)
                 console.log('idwimpucie',`${skl}-${item[0]}`)
-                formBox.appendChild(label)
-                formBox.appendChild(select)
-                formBox.appendChild(br)
+                div.appendChild(label)
+                div.appendChild(select)
+                formBox.appendChild(div)
+
                 //const optionBox= document.getElementById('optionId')
                 const optionBox= document.getElementById(`${skl}-${item[0]}`)
                 const slicedArray=item.slice(1)
@@ -233,8 +213,7 @@ function generowanieFormularza (){
                 const option=document.createElement('option')
                 option.textContent = elem
                 optionBox.appendChild(option)
-                })}
-                }
+                })
             }else{
 
             if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych'].includes(item)){
@@ -257,11 +236,14 @@ function generowanieFormularza (){
             } else
             {
             const div=document.createElement('div')
-            div.setAttribute('class','input-field')
+            div.setAttribute('class','elFormDelete input-field-form')
             const label=document.createElement('label')
             const input=document.createElement('input')
             input.setAttribute('class','elFormDelete')
             label.setAttribute('class','elFormDelete')
+            input.setAttribute('type','number')
+            input.setAttribute("min","0")
+            input.setAttribute('max',"99999")
             input.setAttribute('id',`${skl}-${item}`)
             console.log('idwimpucie',`${skl}-${item}`)
             const br=document.createElement('br')
@@ -279,12 +261,21 @@ function generowanieFormularza (){
             zapiszZmianyButton.style.visibility = "hidden"
 
 
-            }else{const label=document.createElement('label')
+            }else{
+            if (elementyForm=="ten składnik już został dodany"){const label=document.createElement('label')
             label.textContent='Ten składnik został już dodany. Czy chcesz go edytować? '
             label.setAttribute('class','elFormDelete')
             formBox.appendChild(label)
             dodajSkladnikButton.style.visibility = "hidden"
-            edytujSkladnikButton.style.visibility = "visible"
+            edytujSkladnikButton.style.visibility = "visible"}
+            else if (elementyForm=='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik ')
+            {const label=document.createElement('label')
+            label.textContent='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik '
+            label.setAttribute('class','elFormDelete')
+            formBox.appendChild(label)
+            dodajSkladnikButton.style.visibility = "hidden"
+            edytujSkladnikButton.style.visibility = "hidden"
+            zapiszZmianyButton.style.visibility = "hidden"}
 
             }
 
@@ -567,13 +558,18 @@ function generowanieFormularzaDoEdycji (item){
           //skl = item || inputBox.value;
 //          if(item){skl=item}else{
 //          skl=inputBox.value}
-          skl=item || inputBox.value
+          if (item!='[object MouseEvent]'){skl=item}else{skl=inputBox.value}
+//          skl=item || inputBox.value
+          console.log('inputBox.value',inputBox.value)
+          console.log('item',item)
 
           removeElementsByClass('elFormDelete')
           const div=document.createElement('div')
           div.setAttribute('class','elFormDelete');
           div.textContent='Edycja składnika'
+          div.setAttribute('id','form-header')
           formBox.appendChild(div)
+          modalFormHeaderBox=document.getElementById('form-header')
           const br=document.createElement('br')
           br.setAttribute('class','elFormDelete')
           formBox.appendChild(br)
@@ -582,8 +578,8 @@ function generowanieFormularzaDoEdycji (item){
           zapiszZmianyButton.style.visibility = "visible"
 
 
-          console.log('skladnikform',skl);
-          modalTytul.innerText=item || inputBox.value;
+          console.log('skladnikform',inputBox.value);
+          modalTytul.innerText=skl;
            $("#exampleModal").modal('show');
            ////////////////ajax pobieranie elementów formularza///////////////////////////////
 
@@ -596,19 +592,25 @@ function generowanieFormularzaDoEdycji (item){
            console.log('elementyForm z gen form',elementyForm)
 
             elementyForm.map(item=>{
-            if(Array.isArray(item)){if (item[0]==='producent'){
+            if(Array.isArray(item)){
                 console.log('mamy tabelę');
+                const div=document.createElement('div')
+                div.setAttribute('class', 'elFormDelete input-field-form')
                 const label=document.createElement('label')
                 label.textContent=item[0]
                 label.setAttribute('class','elFormDelete');
                 const select=document.createElement('select');
                 select.setAttribute('class',"ui dropdown");
+
+                console.log('response.datadict.values[item[0]]',response.datadict.values[item[0]])
                 //select.setAttribute('id',"optionId");
                 select.setAttribute('class','elFormDelete')
                 select.setAttribute('id',`${skl}-${item[0]}`)
-                console.log('idwimpucie',`${skl}-${item[0]}`)
-                formBox.appendChild(label)
-                formBox.appendChild(select)
+
+                div.appendChild(label)
+                div.appendChild(select)
+                formBox.appendChild(div)
+
                 //const optionBox= document.getElementById('optionId')
                 const optionBox= document.getElementById(`${skl}-${item[0]}`)
                 const slicedArray=item.slice(1)
@@ -616,34 +618,10 @@ function generowanieFormularzaDoEdycji (item){
                 slicedArray.map(elem=>{
                 const option=document.createElement('option')
                 option.textContent = elem
+                option.value=elem
                 optionBox.appendChild(option)
-                })}else{ console.log('tutaj będzie select z imputem');
-                {
-                console.log('mamy tabelę');
-                const label=document.createElement('label');
-                label.textContent=item[0]
-                label.setAttribute('class','elFormDelete');
-                const br=document.createElement('br')
-                br.setAttribute('class','elFormDelete')
-                const select=document.createElement('select');
-                select.setAttribute('class',"ui dropdown");
-                //select.setAttribute('id',"optionId");
-                select.setAttribute('class','elFormDelete')
-                select.setAttribute('id',`${skl}-${item[0]}`)
-                console.log('idwimpucie',`${skl}-${item[0]}`)
-                formBox.appendChild(label)
-                formBox.appendChild(select)
-                formBox.appendChild(br)
-                //const optionBox= document.getElementById('optionId')
-                const optionBox= document.getElementById(`${skl}-${item[0]}`)
-                const slicedArray=item.slice(1)
-                console.log(item[0])
-                slicedArray.map(elem=>{
-                const option=document.createElement('option')
-                option.textContent = elem
-                optionBox.appendChild(option)
-                })}
-                }
+                optionBox.value=response.datadict.values[item[0]]
+                })
             }else{
 
             if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych'].includes(item)){
@@ -668,9 +646,10 @@ function generowanieFormularzaDoEdycji (item){
             console.log('checkvalue',check.value)
             } else
             {
+
             const label=document.createElement('label')
             const input=document.createElement('input')
-            input.value=response.datadict.values[item]
+
             input.setAttribute('class','elFormDelete')
             label.setAttribute('class','elFormDelete')
             input.setAttribute('id',`${skl}-${item}`)
@@ -678,13 +657,15 @@ function generowanieFormularzaDoEdycji (item){
             const br=document.createElement('br')
             br.setAttribute('class','elFormDelete')
             label.textContent=item
+            if(input.value=response.datadict.values[item]!=''){
+            input.value=response.datadict.values[item]
             formBox.appendChild(label)
             formBox.appendChild(input)
-            formBox.appendChild(br)
+            formBox.appendChild(br)}
+            else{modalFormHeaderBox.textContent='brak możliwości edycji';
+            zapiszZmianyButton.style.visibility = "hidden";}
             }}
             })
-
-
 
             },
             error : function (response){
