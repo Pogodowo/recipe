@@ -32,7 +32,7 @@ const edCardButton=document.getElementById('button-ed')
 toPdfButton=document.getElementById("toPdfButton")
 console.log('csrf',csrf)
 
-updateTable()
+
 
 var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol"
 ,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%']
@@ -332,7 +332,7 @@ function dodawanieSkl(){
                  /////koniec ajaxa
                  removeElementsByClass('elFormDelete');
                  $("#exampleModal").modal('hide');
-                 updateTable();
+                 //updateTable();
 
 
                  },
@@ -363,6 +363,9 @@ function updateTable(){
             param=elementyTabeli.parametry.fields
             slownik=elementyTabeli.slownik
             elementyTabeli=elementyTabeli.objects
+            alerty=response.tabela_zbiorcza.alerty
+            console.log('alerty',alerty)
+
             console.log('param',param)
             console.log('slownik',slownik)
 
@@ -462,9 +465,9 @@ function updateTable(){
    var li=document.createElement('li')
         li.setAttribute('class','list-group-item')
    var span=document.createElement('span')
-        if (item.fields.skladnik=='3% roztwór kwas borowy' && item.fields.czy_zlozyc_roztwor_ze_skladnikow_prostych=='on')
-        {span.innerHTML=numElem+')   kwas borowy'}else{
-        span.innerHTML=numElem+')   '+item.fields.skladnik}
+//        if (item.fields.skladnik=='3% roztwór kwas borowy' && item.fields.czy_zlozyc_roztwor_ze_skladnikow_prostych=='on')
+//        {span.innerHTML=numElem+')   kwas borowy'}else{
+        span.innerHTML=numElem+')   '+item.fields.skladnik//}
 
    var buttonDel=document.createElement('button')
        buttonDel.innerText='Usuń'
@@ -474,9 +477,10 @@ function updateTable(){
        buttonEd.innerText='Edytuj'
        buttonEd.setAttribute('class','btn btn-primary mt-1 button-card')
        buttonEd.setAttribute('id','button-ed')
-       li.append(span)
+
        li.appendChild(buttonDel)
        li.appendChild(buttonEd)
+       li.append(span)
        ul.appendChild(li)
 
    buttonDel.onclick = function() {usuwanieSkladnika(item.pk);
@@ -530,9 +534,10 @@ function updateTable(){
             div=document.createElement('div');
             div.innerHTML='<br>M.f. Ung. ';
             tabelaDocelowa.appendChild(div)
+
             }
 
-
+            if (alerty['alert']!=''){alert(alerty['alert'])}
             },
             error : function (error){console.log('error')},
             })
@@ -548,7 +553,7 @@ function removeElementsByClass(className){
 ////////////////////////////////////////////////////////////////////
 const dodanyId=0
 
-updateTable()
+//updateTable()
 
 
 /////////////////edycja danych składnika//////////////////////////
@@ -741,7 +746,7 @@ function edytowanieSkl(){
 
 
 
-
+updateTable()
 autocompleteButton.addEventListener( 'click',generowanieFormularza );
 dodajSkladnikButton.addEventListener('click',dodawanieSkl );
 edytujSkladnikButton.addEventListener('click',generowanieFormularzaDoEdycji)

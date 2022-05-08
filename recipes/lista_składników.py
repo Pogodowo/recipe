@@ -5,7 +5,7 @@ data={'witamina A':[['jednostka_z_recepty','solutio','krople','gramy','jednostki
       'Rezorcyna':['ilosc_na_recepcie','aa'],
       'Metronidazol':['ilosc_na_recepcie','aa'],
       'Mocznik':['ilosc_na_recepcie','aa','dodaj_wode'],
-      'Woda destylowana':['ilosc_na_recepcie','aa','aa_ad'],
+      'Woda destylowana':['ilosc_na_recepcie','aa','aa_ad','ad'],
       'Wazelina':['ilosc_na_recepcie','aa','aa_ad','ad'],
       'Euceryna': ['ilosc_na_recepcie', 'aa', 'aa_ad', 'ad'],
       'Lanolina':['ilosc_na_recepcie','aa','aa_ad','ad'],

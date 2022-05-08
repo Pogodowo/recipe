@@ -265,8 +265,10 @@ function dodawanieSkl(){
                 data : dataf,
                 success: function(response){
                          console.log('wygrywamy');
-                         console.log('response.tabela',response.dict)
-                         location.href = 'mojerec'
+                         console.log('response.dodawanie recepty tabela',response.dict)
+                         id=response.dict.id
+                         //location.href = 'mojerec'
+                         location.href = `receptura/(${id})` //`delSkl/(${ pk })`
 
                                         },
                 error : function(error){

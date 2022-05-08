@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.contrib.sessions.models import Session
 
 class Receptura (models.Model):
     rodzaje=(('1','Maść'),('2','czopki i globulki'),('3','receptura płynna'))
@@ -15,7 +15,8 @@ class Receptura (models.Model):
     czy_ilosc_oleum_pomnozyc =models.TextField(choices=czop_czy_glob, blank=True, null=True)
     ilosc_masci =models.CharField(max_length=40, blank=True, null=True, default='')
     ilosc_gramow = models.CharField(max_length=40, blank=True, null=True, default='')
-    owner=models.ForeignKey(User,on_delete=models.CASCADE)
+    owner=models.ForeignKey(User,blank = True, null = True,on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, null=True,on_delete=models.CASCADE)
     def __str__(self):
         return self.nazwa
 
@@ -36,9 +37,9 @@ class Skladnik(models.Model):
     sztuki = models.CharField(max_length=40, default='0')
     tabletki = models.CharField(max_length=40, default='0')
     czesci = models.CharField(max_length=40, default='0')
-    producent = models.TextField(choices=producenci, blank=True, null=True)
+    producent = models.CharField(max_length=40, default='0')
     aa = models.CharField(max_length=20, default='off')
-    obey = models.IntegerField(null=True)
+    obey = models.IntegerField(null=True,default=0)
     sumg = models.IntegerField(default=0)
     aa_ad = models.CharField(max_length=20, default='off')
     aa_ad_gramy = models.CharField(max_length=40, default='0')
