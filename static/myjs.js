@@ -1,10 +1,10 @@
 console.log('O co tu chodzi?')
-console.log('dupa?')
+console.log('dupa dupadupadupa?')
 const modalBox=document.getElementById("exampleModal")
 //const skladnikBox= document.getElementById('wybieraj');
 const modalTytul=document.getElementById("exampleModalLabel")
 const formBox= document.getElementById('modal-form')
-
+const closeXButton=document.getElementById('close-x')
 const closeButton=document.getElementById('close-button')
 const dodajSkladnikButton=document.getElementById("dodajsklbutton")
 const prowizorycznatabelaBox=document.getElementById('prowizorycznatabela')
@@ -31,8 +31,8 @@ const delCardButton=document.getElementById('button-del')
 const edCardButton=document.getElementById('button-ed')
 toPdfButton=document.getElementById("toPdfButton")
 console.log('csrf',csrf)
-
-
+console.log('closeXButton',closeXButton)
+updateTable()
 
 var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol"
 ,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%']
@@ -746,14 +746,20 @@ function edytowanieSkl(){
 
 
 
-updateTable()
+
 autocompleteButton.addEventListener( 'click',generowanieFormularza );
 dodajSkladnikButton.addEventListener('click',dodawanieSkl );
 edytujSkladnikButton.addEventListener('click',generowanieFormularzaDoEdycji)
 zapiszZmianyButton.addEventListener('click',edytowanieSkl)
 closeButton.addEventListener('click',e=>{console.log('kliknąłem close ');$("#exampleModal").modal('hide');
                                            removeElementsByClass('elFormDelete'); })
+closeXButton.addEventListener('click',e=>{console.log('kliknąłem x close ');$("#exampleModal").modal('hide');
+                                           removeElementsByClass('elFormDelete'); })
 
+modalBox.addEventListener('hidden.bs.modal', function (event) {
+    removeElementsByClass('elFormDelete');
+    console.log('zamknąłem modal')
+});
 
 
 

@@ -12,13 +12,15 @@
 {% if form.errors %}
 <p> Dupa Nieprawidłowe dane użytkownika</p>
 {% endif %}
-
+<div class="shadow p-4 mb-5 bg-body rounded">
+<h1>Formularz Rejestracyjny</h1>
 <form method="post" action="{% url 'users:register' %}">
     {% csrf_token %}
     {{ form.as_p}}
-    <button name="'submit">Zarejestruj</button>
+    <button name="submit" class="btn-secondary">Zarejestruj</button>
     <input type="hidden" name="next" value="{% url 'home' %}">
 </form>
+</div>
 {% endblock content %}
 </body>
 </html>

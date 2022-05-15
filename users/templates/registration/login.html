@@ -12,18 +12,25 @@
 {% if form.errors %}
 <p> Dupa Nieprawidłowe dane użytkownika</p>
 {% endif %}
-
+<div class="shadow p-4 mb-5 bg-body rounded">
+<h1>Logowanie</h1>
 <form method="post" action="{%url 'users:login' %}">
     {% csrf_token %}
-    {% for field in form %}
-      <div class="form-text">
-        <label>{{ field.label}}</label>{{ field }}
-     </div>
-{% endfor %}
+    <div class="mb-3">
+    <label class="form-label">Użytkownik</label>
+    <input type="text" class="form-control" name="username" aria-describedby="emailHelp">
+
+  </div>
+  <div class="mb-3">
+    <label  class="form-label">Hasło</label>
+    <input type="password" class="form-control" name="password">
+  </div>
+
 <!--    {{ form.as_p}}-->
-    <button name="'submit">Zaloguj</button>
+    <button name="submit" class="btn-secondary">Zaloguj</button>
     <input type="hidden" name="next" value="{% url 'home' %}">
 </form>
+</div>
 {% endblock content %}
 </body>
 </html>

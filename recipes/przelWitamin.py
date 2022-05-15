@@ -17,13 +17,13 @@ def PrzeliczanieWit(dodanySkladnik,to_updade,rodzaj,ilosc):
                 to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / 45000, 3))
                 to_updade['gramy'] = str(round((float(to_updade['ilosc_na_recepcie']) / 45000)*float(to_updade['gestosc']), 3))
                 to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 45000 * 28, 3))
-                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 4500, 3))
+                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 450000, 3))
                 to_updade['jednostki'] = to_updade['jednostki'] = str(round(float(to_updade['ilosc_na_recepcie']) , 3))
             elif to_updade['producent'] == 'Medana 50000j.m./ml':
                 to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / 50000, 3))
                 to_updade['gramy'] = str(round((float(to_updade['ilosc_na_recepcie']) / 50000)*float(to_updade['gestosc']), 3))
                 to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 50000 * 30, 3))
-                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 5000, 3))
+                to_updade['opakowania'] = str(round(float(to_updade['ilosc_na_recepcie']) / 500000, 3))
                 to_updade['jednostki'] = str(round(float(to_updade['ilosc_na_recepcie']) , 3))
         elif to_updade['jednostka_z_recepty'] == 'krople':  # 'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
             if to_updade['producent'] == 'Hasco 45000j.m./ml':

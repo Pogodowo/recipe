@@ -179,17 +179,11 @@ def dodajsklJson (request,sklId):
 
                 jestwoda=True
             else:
-                woda.show=True
-                woda.ilosc_na_recepcie=ilosc
+                woda.delete()
+                new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
+                                                  ilosc_na_recepcie=ilosc)
 
-                # if jestmocznik==True and mocznik!=None:
-                #     if mocznik.dodaj_wode=='on':
-                #         if float(woda.ilosc_na_recepcie)<float(woda.woda_mocznik):
-                #             woda.gramy=woda.mocznik
-                #         else:
-                #             woda.gramy=woda.ilosc_na_recepcie
-
-                woda.save()
+                #woda.save()
 
         else:
             new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc,)
@@ -250,12 +244,14 @@ def dodajsklJson (request,sklId):
 
 
 def aktualizujTabela (request,sklId):
+    gramy_po_podziale = 0
     alerty={'alert': ''}
     previous_skl=None
     if len(Skladnik.objects.filter(receptura_id=int(sklId)))>1:
         previous_skl = Skladnik.objects.filter(receptura_id=int(sklId)).order_by('-pk')[1]
     last=None
     last=Skladnik.objects.filter(receptura_id=int(sklId)).last()
+    receptura = Receptura.objects.get(id=int(sklId))
     #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
     if previous_skl != None and previous_skl.ilosc_na_recepcie == '' and previous_skl.show == True and last.ad == 'on':
         last.ad = 'off'
@@ -264,8 +260,13 @@ def aktualizujTabela (request,sklId):
     ###########################################################################################################
     if last!=None:
         if last.jednostka_z_recepty == 'gramy':
+
             last.gramy = last.ilosc_na_recepcie
             last.save()
+        if receptura.ilosc_czop_glob != '' and last.ilosc_na_recepcie != '':
+            if last.jednostka_z_recepty == 'gramy':
+                last.gramy = str(round(float(last.gramy) * float(receptura.ilosc_czop_glob), 3))
+                last.save()
         print('last.skladnik',last.skladnik,'last,gramy',last.gramy,)
         g = last.gramy
         l = last.pk
@@ -360,13 +361,13 @@ def aktualizujTabela (request,sklId):
             skladnik_z_ad .save()
             print('skladnik_z_ad .aa_ad_gramy', skladnik_z_ad .aa_ad_gramy)
             sys.stdout.flush()
-            if float(skladnik_z_ad.ilosc_na_recepcie)<Sumskl(sklId):
+            if skladnik_z_ad.ilosc_na_recepcie=='' or float(skladnik_z_ad.ilosc_na_recepcie)<Sumskl(sklId):
                 alerty['alert']='ilość dodanego skłądnika z ad musi być większ niż masa dotychczasowych skladników'
                 skladnik_z_ad.delete()
                 jest_ad = False
             else:
                 skladnik_z_ad.gramy = str(float(skladnik_z_ad.ilosc_na_recepcie) - Sumskl(sklId))
-
+                gramy_po_podziale=skladnik_z_ad.gramy
                 skladnik_z_ad.save()
         elif jest_ad ==True and skladnik_z_ad != None and skladnik_z_ad.ad == 'on' and skladnik_z_ad.aa == 'on':
             skladnik_z_ad.aa_ad = 'on'
@@ -391,8 +392,10 @@ def aktualizujTabela (request,sklId):
             for el in all.order_by('-pk'):  # order_by('-pk')
                 print('el.gramy:', el.gramy,'el.skladnik:', el.skladnik, 'el.obey!=None', el.obey != None)
                 sys.stdout.flush()
-                if  el.ilosc_na_recepcie == '' or el.aa_ad=='on':
+                if  el.ilosc_na_recepcie == '' or el.aa_ad=='on' and el.show is True:
                     a = a + 1
+                elif el.show is False:
+                    pass
                 else:
                     break
                 print('dzelnik', a)
@@ -400,9 +403,12 @@ def aktualizujTabela (request,sklId):
 
 
             reversed_list=all.order_by('-pk')
-            skladnik_z_aa_ad.aa_ad_gramy=skladnik_z_aa_ad.ilosc_na_recepcie
-            gramy_po_podziale=str(round((float(skladnik_z_aa_ad.aa_ad_gramy) - Sumskl(sklId)) / a, 2))
-
+            if skladnik_z_aa_ad.ilosc_na_recepcie!='':
+                skladnik_z_aa_ad.aa_ad_gramy=skladnik_z_aa_ad.ilosc_na_recepcie
+                skladnik_z_aa_ad.save()
+                gramy_po_podziale=str(round((float(skladnik_z_aa_ad.aa_ad_gramy) - Sumskl(sklId)) / a, 2))
+            print('gramy_po_podziale', gramy_po_podziale,'Sumskl(sklId)',Sumskl(sklId),'a',a)
+            sys.stdout.flush()
             print(' reversed_list[0]',  reversed_list[0].skladnik)
             sys.stdout.flush()
             print('a', a)
@@ -419,9 +425,20 @@ def aktualizujTabela (request,sklId):
                     ob.gramy=gramy_po_podziale
                     ob.obey=skladnik_z_aa_ad.pk
                     ob.save()
+                    if ob.skladnik=='Etanol':
+                        etanol.gramy=gramy_po_podziale
+                        etanol.save()
+                    elif ob.skladnik=='3% roztwór kwas borowy' and roztw_kw!=None:
+                        roztw_kw.gramy=gramy_po_podziale
+                        roztw_kw.save()
+                    elif ob.skladnik=='Woda destylowana' and woda!=None:
+                        woda.gramy=gramy_po_podziale
+                        woda.save()
+                    print(' ob.skladnik', ob.skladnik)
+                    print('ob.gramy', ob.gramy)
                     b = b + 1
                 else:
-                    b=b+2
+                    b=b+1
 
 
         print('Sumskl(sklId)',Sumskl(sklId))
@@ -437,7 +454,7 @@ def aktualizujTabela (request,sklId):
                 woda.save()
             elif jestwoda==False:
                 Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,woda_mocznik=mocznik.woda_mocznik)
-                Sumowanie_wody(sklId)
+                Sumowanie_wody(sklId,None)
                 jestwoda=True
         Kasowanie_wody(sklId)
 
@@ -454,13 +471,14 @@ def aktualizujTabela (request,sklId):
                 roztw_kw.save()
                 print('jestwoda==True', jestwoda)
                 sys.stdout.flush()
-                if jestwoda==True:
+                if jestwoda==True and woda!=None:
                     woda.woda_kwas_borowy=roztw_kw.woda_kwas_borowy
                     woda.save()
                 elif jestwoda==False:
-                    Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,woda_kwas_borowy=roztw_kw.woda_kwas_borowy)
+                    woda=Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,woda_kwas_borowy=roztw_kw.woda_kwas_borowy)
                     jestwoda = True
-                    Sumowanie_wody(sklId)
+
+                    #Sumowanie_wody(sklId)
                 print('jestwoda==True2', jestwoda)
 
 
@@ -479,22 +497,27 @@ def aktualizujTabela (request,sklId):
 
 
         if jestetanol==True and etanol !=None :
-            to_updade = Przeliczanie_etanolu(etanol.skladnik, etanol.pk)
+            to_updade = Przeliczanie_etanolu(etanol.skladnik, etanol.pk,etanol.gramy)
+            print('etanol.gramy', etanol.gramy)
+            sys.stdout.flush()
             if to_updade['ilosc_etanolu']=='dupa':#jeżeli stężenie użytego jest mniejsz niż potrzebnego
-
+                alerty['alert'] = 'Stężenie Etanolu na recepcie musi być mniejsze niż posiadanego do sporządzenia roztworu'
                 etanol.delete()
+                jestetanol = False
             else:
                 etanol.ilosc_etanolu=to_updade["ilosc_etanolu"]
                 etanol.ilosc_wody_do_etanolu=to_updade["ilosc_wody_do_etanolu"]
                 etanol.save()
 
-                if jestwoda==True:
-                    woda.ilosc_wody_do_etanolu=etanol.ilosc_wody_do_etanolu
-                    woda.save()
-                elif jestwoda==False:
-                    Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,ilosc_wody_do_etanolu=etanol.ilosc_wody_do_etanolu)
-                    jestwoda =True
-                etanol.save()
+            if jestwoda==True and woda!=None:
+                woda.ilosc_wody_do_etanolu=etanol.ilosc_wody_do_etanolu
+                woda.save()
+
+            elif jestwoda==False:
+                woda = Skladnik.objects.create(receptura_id=receptura,skladnik='Woda destylowana',show=False,ilosc_wody_do_etanolu=etanol.ilosc_wody_do_etanolu)
+                jestwoda =True
+            etanol.save()
+
         if jestetanol==False and jestwoda==True and woda!= None:
             woda.ilosc_wody_do_etanolu='0'
 
@@ -515,7 +538,7 @@ def aktualizujTabela (request,sklId):
                 last.gramy=str(round(float(last.ilosc_na_recepcie)*float(receptura.ilosc_czop_glob)-Sumskl(sklId),3 ))
                 last.save()
        
-        Sumowanie_wody(sklId)
+        Sumowanie_wody(sklId,gramy_po_podziale)
         Kasowanie_wody(sklId)
         objects = serializers.serialize("python", Skladnik.objects.filter(receptura_id=int(sklId)))
         parametry = serializers.serialize("python", Receptura.objects.filter(pk=int(sklId)))
@@ -562,7 +585,7 @@ def delSkl (request,id):
 
     ####################################################################
     Kasowanie_wody(id)
-    Sumowanie_wody(id)
+    Sumowanie_wody(id,None)
     # if jestwoda == True and woda != None:
     #     if woda.ilosc_na_recepcie == '0' and woda.ilosc_wody_do_etanolu == '0' and woda.woda_mocznik == '0' and woda.woda_kwas_borowy == '0':
     #         woda.delete()
