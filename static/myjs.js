@@ -188,6 +188,7 @@ function generowanieFormularza (){
            console.log('elementyForm z gen form',elementyForm)
            if (elementyForm!="ten składnik już został dodany" & elementyForm!='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik '){
             elementyForm.map(item=>{
+            console.log('item',item)
             if(Array.isArray(item)){
                 console.log('mamy tabelę');
                 const div=document.createElement('div')
@@ -215,8 +216,7 @@ function generowanieFormularza (){
                 optionBox.appendChild(option)
                 })
             }else{
-
-            if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych'].includes(item)){
+            if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych','czy_powiekszyc_mase_oleum'].includes(item)){
             const label=document.createElement('label')
             label.textContent=dict[item]
             const check = document.createElement("input");
@@ -364,7 +364,8 @@ function updateTable(){
             slownik=elementyTabeli.slownik
             elementyTabeli=elementyTabeli.objects
             alerty=response.tabela_zbiorcza.alerty
-            console.log('alerty',alerty)
+            display=response.tabela_zbiorcza.wyswietlane_dane
+            console.log('display',display)
 
             console.log('param',param)
             console.log('slownik',slownik)
@@ -388,7 +389,7 @@ function updateTable(){
         /////////wypisywanie atrybutów danego składnika/////
 
 
-        for (const [key, value] of Object.entries(param)){ if ( value!=null && value!='0' && value!=''){
+        for (const [key, value] of Object.entries(param)){ if ( value!=null && value!='0' && value!=''  ){
                const div=document.createElement('div')
                   div.setAttribute('class','flex-item-param')
                   if (key in slownik & key=='date'){console.log('jest w słowniku')
@@ -443,7 +444,10 @@ function updateTable(){
             else if(item.fields.aa_ad==='on'){div.innerHTML+='aa ad '}
             else if(item.fields.ad==='on'){div.innerHTML+='ad '}
             else if(item.fields.qs==='on'){div.innerHTML+='qs '}
-            if (item.fields.ilosc_na_recepcie!=='') {div.innerHTML+=+item.fields.ilosc_na_recepcie}
+            else if(item.fields.jednostka_z_recepty==='gramy_roztworu'){div.innerHTML+='sol. '}
+            else if(item.fields.jednostka_z_recepty==='krople'){div.innerHTML+='gutt. '}
+            if (item.fields.ilosc_na_recepcie!=='') {div.innerHTML+=parseFloat(item.fields.ilosc_na_recepcie).toFixed(1)}//10.toFixed(2)
+            if (item.fields.jednostka_z_recepty==='jednostki') {div.innerHTML+=' j.m.'}
             console.log('div',div);
             div.appendChild(deleteButton);
             tabelaDocelowa.appendChild(div);
@@ -494,8 +498,9 @@ function updateTable(){
 
         /////////wypisywanie atrybutów danego składnika/////
 
-
-        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!=''){
+        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!=''  ){
+        //for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!='' && display[item.fields.skladnik].includes(key) ){
+                //console.log('key,item.fields.skladnik',key,item.fields.skladnik,'display[item.fields.skladnik]',display[item.fields.skladnik])
                const div=document.createElement('div')
                   div.setAttribute('class','flex-item')
                   if (key in slownik){console.log('jest w słowniku')
@@ -537,7 +542,7 @@ function updateTable(){
 
             }
 
-            if (alerty['alert']!=''){alert(alerty['alert'])}
+            if (alerty!=null && alerty['alert']!=''){alert(alerty['alert'])}
             },
             error : function (error){console.log('error')},
             })

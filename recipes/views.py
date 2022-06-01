@@ -13,6 +13,7 @@ from .obliczenia import Przeliczanie_etanolu,Kasowanie_wody,Sumowanie_wody,Sumsk
 from .connon_fields import fields
 from .wspolczynniki_wyparcia import wspolczynniki_wyparcia
 from .przelWitamin import PrzeliczanieWit
+from .wyswietlane_dane import wyswietlane_dane
 
 def home (request):
     if not request.session.exists(request.session.session_key):
@@ -60,7 +61,14 @@ def dodajRec(request):
     return render(request, 'dodajrec.html', context)
 
 def dodawanieRecJson(request):
+
     if request.is_ajax():
+        ilosc_receptur=0
+        if request.user.is_anonymous is False:
+            ilosc_receptur = len(Receptura.objects.filter(owner=request.user))
+        else:
+            pass
+
         nazwa = request.POST.get("nazwa")
         rodzaj=request.POST.get("rodzaj")
         parametryDict={}
@@ -69,7 +77,6 @@ def dodawanieRecJson(request):
         if request.user.is_authenticated:
             user = request.user
         else:
-
             user = None
         ###################################################################################################
         for i in parametry:
@@ -83,22 +90,30 @@ def dodawanieRecJson(request):
         this_session_rec=Receptura.objects.filter(session=request.session.session_key)
         if len(this_session_rec)>0:
             this_session_rec.delete()
-        new_skl=Receptura.objects.create(owner=user,nazwa=nazwa,rodzaj=rodzaj)#Session.objects.get(session_key=request.session.session_key)
-        if request.user.is_anonymous == True:
-            new_skl.session=Session.objects.get(session_key=request.session.session_key)
-        for key, value in parametryDict.items():
-            print('key', key,'value',value)
+        new_skl=None
+        if ilosc_receptur<5 or request.user.is_anonymous is True:
+            new_skl=Receptura.objects.create(owner=user,nazwa=nazwa,rodzaj=rodzaj)#Session.objects.get(session_key=request.session.session_key)
+            print( 'ciekawe czy się wyprintuje dwa razy')#new_skl=Receptura.objects.create(owner=user,nazwa=nazwa,rodzaj=rodzaj)#Session.objects.get(session_key=request.session.session_key)
             sys.stdout.flush()
-            setattr(new_skl, key, value)
-        new_skl.save()
-        print('new_skl',new_skl.id)
-        sys.stdout.flush()
-        # for key, value in to_updade.items():
-        #     setattr(new_skl, key, value)
-        new_skl.save()
-        parametryDict['id']=new_skl.id
+        else:
+            parametryDict['res']='przekroczona liczba'
+        if request.user.is_anonymous is True:
+            new_skl.session=Session.objects.get(session_key=request.session.session_key)
+        if new_skl!=None:
+            for key, value in parametryDict.items():
+                print('key', key,'value',value)
+                sys.stdout.flush()
+                setattr(new_skl, key, value)
+            new_skl.save()
+            print('new_skl',new_skl.id)
+            sys.stdout.flush()
+            # for key, value in to_updade.items():
+            #     setattr(new_skl, key, value)
+            new_skl.save()
+            parametryDict['id']=new_skl.id
         return JsonResponse({'dict':parametryDict})
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
+
 
 def ParamRecJson(request ,recId):
     parametry = serializers.serialize("python", Receptura.objects.filter(pk=int(recId)))
@@ -537,6 +552,9 @@ def aktualizujTabela (request,sklId):
             elif obiekt.ad == 'on':
                 last.gramy=str(round(float(last.ilosc_na_recepcie)*float(receptura.ilosc_czop_glob)-Sumskl(sklId),3 ))
                 last.save()
+            if obiekt.czy_powiekszyc_mase_oleum == 'on':
+                last.gramy = str(float(last.gramy)+float(receptura.masa_docelowa_czop_glob))
+                last.save()
        
         Sumowanie_wody(sklId,gramy_po_podziale)
         Kasowanie_wody(sklId)
@@ -547,12 +565,16 @@ def aktualizujTabela (request,sklId):
         datax['parametry']=parametry[0]
         datax['objects']=objects
         datax['alerty']=alerty
+        datax['wyswietlane_dane']=wyswietlane_dane(objects)
+
     else:
         datax = {}
         parametry = serializers.serialize("python", Receptura.objects.filter(pk=int(sklId)))
         datax['slownik'] = table_dict
         datax['parametry'] = parametry[0]
         datax['objects'] = None
+        datax['alerty'] = None
+        #datax['wyswietlane_dane'] = wyswietlane_dane(objects)
     return JsonResponse({'tabela_zbiorcza':datax})
 
 
@@ -655,11 +677,18 @@ def edytujsklJson (request,sklId):
                 to_edit = {'skladnik': i.skladnik, 'jednostka_z_recepty': i.jednostka_z_recepty}
                 for j in data[dodanySkladnik]:
                     if type(j) != list:
-                        a = request.POST.get(str(j))
-                        to_edit[j] = a
+                        if str(j) in request.POST:
+                            a = request.POST.get(str(j))
+                            to_edit[j] = a
+                        else:
+                            pass
+
                     else:
-                        a = request.POST.get(str(j[0]))
-                        to_edit[j[0]] = a
+                        if str(j[0]) in request.POST:
+                            a = request.POST.get(str(j[0]))
+                            to_edit[j[0]] = a
+                        else:
+                            pass
                 print('to_edit', to_edit)
                 sys.stdout.flush()
                 # ==========wstawianie gramów==========================

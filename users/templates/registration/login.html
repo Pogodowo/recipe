@@ -30,6 +30,7 @@
     <button name="submit" class="btn-secondary">Zaloguj</button>
     <input type="hidden" name="next" value="{% url 'home' %}">
 </form>
+<a class="nav-link" href="{% url 'password_reset' %}" > Zapomniałeś hasło?</a>
 </div>
 {% endblock content %}
 </body>

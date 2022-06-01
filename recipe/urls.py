@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('recipes.urls')),
     path('to_pdf/', include('to_pdf.urls',namespace='to_pdf')),
     path('users/', include('users.urls')),
+    path('', include('django.contrib.auth.urls'))
 ]

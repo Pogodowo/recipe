@@ -5,6 +5,7 @@ console.log('nowa receptura js')
 const formBoxRec= document.getElementById('form-rec')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 const submitBox=document.getElementById('dodajRecSubmit')
+const zaDuzoRecepturModal=document.getElementById("zaDuzoRecepturModal")
 function removeElementsByClass(className){
     const elements = document.getElementsByClassName(className);
     while(elements.length > 0){
@@ -244,8 +245,8 @@ function generowanieFormularzaRecepty (){
 
 
 
-function dodawanieSkl(){
-
+function dodawanieRec(){
+                console.log('wywołanie dodawanieRec()')
                 ///tworzenie daty formulara i odpowiedzi do ajaxa////////////////////
                 dataf={'csrfmiddlewaretoken': csrf[0].value,}
 
@@ -266,9 +267,15 @@ function dodawanieSkl(){
                 success: function(response){
                          console.log('wygrywamy');
                          console.log('response.dodawanie recepty tabela',response.dict)
-                         id=response.dict.id
+                         if (response.dict.id!= null && response.dict.res!= "przekroczona liczba")
+                         {id=response.dict.id
                          //location.href = 'mojerec'
-                         location.href = `receptura/(${id})` //`delSkl/(${ pk })`
+                         location.href = `receptura/(${id})`
+                         }
+                         else{
+                         console.log('za dużo receptur')
+                         $("#zaDuzoRecepturModal").modal('show');
+                         }
 
                                         },
                 error : function(error){
@@ -285,6 +292,5 @@ function dodawanieSkl(){
 
                     /////tu koniec wstawania//////
 
-
 generowanieFormularzaRecepty()
-submitBox.addEventListener('click', dodawanieSkl)
+submitBox.addEventListener('click', dodawanieRec)

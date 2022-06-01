@@ -57,6 +57,9 @@ class Skladnik(models.Model):
     woda_kwas_borowy = models.CharField(max_length=40, default='0')
     ilosc_kwasu_borowego_do_roztworu = models.CharField(max_length=40, default='0')
     calkowita_ilosc_gramow_wody = models.CharField(max_length=40, default='0')
+    czy_powiekszyc_mase_oleum=models.CharField(max_length=20, default='off')
+    gramy_czystej_vit_e = models.CharField(max_length=20, default='0')
+    gramy_roztworu=models.CharField(max_length=20, default='0')
 
     def __str__(self):
         return self.skladnik

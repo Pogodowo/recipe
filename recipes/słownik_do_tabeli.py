@@ -4,6 +4,8 @@ table_dict={'jednostka_z_recepty':'jednostka z recepty','ilosc_na_recepcie':'ilo
             'czopki_czy_globulki':'rodzaj','ilosc_czop_glob':'ilosc sztuk',
             'masa_docelowa_czop_glob':'masa docelowa w gramach','date':'data dodania','rodzaj':"rodzaj", 'aa_ad':'aa ad',
 'aa':'aa','dodaj_wode':'dodaj wodę','ad':'ad','qs':'qs','czy_zlozyc_roztwor_ze_skladnikow_prostych':' czy złożyć roztwór ze składników prostych',
+'czy_powiekszyc_mase_oleum':'Czy powiększyć masę oleum cacao o masę jednego czopka/globulki ? ',
+'UI_w_mg': 'ilość jednostek  w miligramie'
 
             }
 

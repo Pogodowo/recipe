@@ -60,7 +60,10 @@ display:inline;
 float:left;
 }
 
-
+.list-group-item{
+background: #e9f0ed;
+border-radius:0px;
+}
 .flex-container{
 
 display:flex;
@@ -89,6 +92,7 @@ float:center;
 .card-css{
 background: #afb39d;
 width: 40rem;
+margin: 3px;
 border-radius:0px;
 
 }
@@ -297,3 +301,41 @@ background-color: #e4ede4;
 }
 
 
+.my-col{
+border: 1px solid;
+border-color: black ;
+}
+
+my-container{
+left: 0 ;
+}
+
+my-row{
+margin-left: 10px  !important ;
+}
+
+.btn-xl {
+    width:500px;
+    height: 50px;
+    /*padding: 10px 120px;*/
+    font-size: 20px;
+    border-radius: 10px;
+    align: left;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+/*.my-pre{
+margin-bottom: 2px;
+margin-top: 5px;
+text-align: left;
+}*/
+
+pre {
+    text-align: left;
+    white-space: pre-line;
+    margin-bottom: 3px;
+    margin-top: 10px;
+    font-family: sans-serif;
+    line-height: 1.25;
+  }
