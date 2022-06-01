@@ -322,6 +322,10 @@ function dodawanieSkl(){
                 success: function(response){
                          console.log('wygrywamy');
                          console.log('response.tabela',response.tabela)
+                         if (response.tabela['za_duzo_skladnikow']!=null && response.tabela['za_duzo_skladnikow']=='za_duzo_skladnikow')
+                         {console.log('za dużo składników');
+                         $("#zaDuzoSkladnikowModal").modal('show');
+                         }
                          tabelaDocelowa.innerHTML=''
                          updateTable()
                                         },

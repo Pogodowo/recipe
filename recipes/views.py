@@ -172,88 +172,91 @@ def dodajsklJson (request,sklId):
         receptura=Receptura.objects.get(id=int(sklId))
         ilosc=request.POST.get("ilosc_na_recepcie")
         all = Skladnik.objects.filter(receptura_id=int(sklId))
-        ###########sprawdzanie czy jest woda################
-        woda=None
-        jestwoda = False
-        for i in all:
-            if i.skladnik == 'Woda destylowana':
-                jestwoda = True
-                woda = i
-        mocznik = None
-        jestmocznik = False
-        for i in all:
-            if i.skladnik == 'Mocznik':
-                jestmocznik = True
-                mocznik = i
+        to_updade={}
+        if len(all)<4:
+            ###########sprawdzanie czy jest woda################
+            woda=None
+            jestwoda = False
+            for i in all:
+                if i.skladnik == 'Woda destylowana':
+                    jestwoda = True
+                    woda = i
+            mocznik = None
+            jestmocznik = False
+            for i in all:
+                if i.skladnik == 'Mocznik':
+                    jestmocznik = True
+                    mocznik = i
 
-        ################################################################################
-        if dodanySkladnik=='Woda destylowana':
-            if jestwoda==False:
-                new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
-                                                  ilosc_na_recepcie=ilosc)
+            ################################################################################
+            if dodanySkladnik=='Woda destylowana':
+                if jestwoda==False:
+                    new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
+                                                      ilosc_na_recepcie=ilosc)
 
-                jestwoda=True
+                    jestwoda=True
+                else:
+                    woda.delete()
+                    new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
+                                                      ilosc_na_recepcie=ilosc)
+
+                    #woda.save()
+
             else:
-                woda.delete()
-                new_skl = Skladnik.objects.create(skladnik=dodanySkladnik, receptura_id=receptura,
-                                                  ilosc_na_recepcie=ilosc)
+                new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc,)
 
-                #woda.save()
+            if new_skl!=None:
+                to_updade={'skladnik' :new_skl.skladnik, 'jednostka_z_recepty':new_skl.jednostka_z_recepty}
+                for i in data[dodanySkladnik]:
+                    if type(i)!=list:
+                        a=request.POST.get(str(i))
+                        to_updade[i]=a
+                    else:
+                        a = request.POST.get(str(i[0]))
+                        to_updade[i[0]] = a
+
+                #==========wstawianie gramów==========================
+                if to_updade['jednostka_z_recepty']=='gramy':
+                    to_updade['gramy']=ilosc
+                if receptura.ilosc_czop_glob!='' and new_skl.ilosc_na_recepcie!='':
+                    if to_updade['jednostka_z_recepty']=='gramy':
+                        to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
+                #do wywalenia jak popraeię obliczenia witamin
+                    elif to_updade['jednostka_z_recepty']=='solutio':
+                        to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
+
+                #=====================================================
+                if 'aa_ad' in to_updade:
+                    if to_updade['aa_ad']=='on':
+                        to_updade['aa_ad_gramy']=ilosc
+
+                #=================przelicanie witamin======================================
+                print('new_skl.skladnik',new_skl.skladnik)
+                sys.stdout.flush()
+                if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
+                   to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
+                print('to_ptade bo nie wiem gdzie te gramy',to_updade)
+                sys.stdout.flush()
+
+                for key, value in to_updade.items():
+                    setattr(new_skl, key, value)
+                new_skl.save()
+                print('new_skl.gramy bo nie wiem gdzie te gramy', new_skl.gramy)
+                sys.stdout.flush()
+                ####################dodawanie aut aa bo w uptade Table trzeba było odświerzać to dodaję tu
+                if previous_skl != None and previous_skl.gramy == '' and new_skl.gramy != '':
+                    new_skl.aa = 'on'
+                    new_skl.save()
+                #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
+                if previous_skl!=None and previous_skl.ilosc_na_recepcie == '' and previous_skl.show==True and new_skl.ad=='on':
+                    new_skl.ad='off'
+                    new_skl.aa_ad='on'
+                    new_skl.save()
 
         else:
-            new_skl=Skladnik.objects.create(skladnik=dodanySkladnik,receptura_id=receptura,ilosc_na_recepcie=ilosc,)
+            to_updade['za_duzo_skladnikow']='za_duzo_skladnikow'
 
-        if new_skl!=None:
-            to_updade={'skladnik' :new_skl.skladnik, 'jednostka_z_recepty':new_skl.jednostka_z_recepty}
-            for i in data[dodanySkladnik]:
-                if type(i)!=list:
-                    a=request.POST.get(str(i))
-                    to_updade[i]=a
-                else:
-                    a = request.POST.get(str(i[0]))
-                    to_updade[i[0]] = a
-
-            #==========wstawianie gramów==========================
-            if to_updade['jednostka_z_recepty']=='gramy':
-                to_updade['gramy']=ilosc
-            if receptura.ilosc_czop_glob!='' and new_skl.ilosc_na_recepcie!='':
-                if to_updade['jednostka_z_recepty']=='gramy':
-                    to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
-            #do wywalenia jak popraeię obliczenia witamin
-                elif to_updade['jednostka_z_recepty']=='solutio':
-                    to_updade['gramy']=str(round(float(ilosc)*float(receptura.ilosc_czop_glob),3))
-
-            #=====================================================
-            if 'aa_ad' in to_updade:
-                if to_updade['aa_ad']=='on':
-                    to_updade['aa_ad_gramy']=ilosc
-
-            #=================przelicanie witamin======================================
-            print('new_skl.skladnik',new_skl.skladnik)
-            sys.stdout.flush()
-            if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
-               to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
-            print('to_ptade bo nie wiem gdzie te gramy',to_updade)
-            sys.stdout.flush()
-
-            for key, value in to_updade.items():
-                setattr(new_skl, key, value)
-            new_skl.save()
-            print('new_skl.gramy bo nie wiem gdzie te gramy', new_skl.gramy)
-            sys.stdout.flush()
-            ####################dodawanie aut aa bo w uptade Table trzeba było odświerzać to dodaję tu
-            if previous_skl != None and previous_skl.gramy == '' and new_skl.gramy != '':
-                new_skl.aa = 'on'
-                new_skl.save()
-            #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
-            if previous_skl!=None and previous_skl.ilosc_na_recepcie == '' and previous_skl.show==True and new_skl.ad=='on':
-                new_skl.ad='off'
-                new_skl.aa_ad='on'
-                new_skl.save()
-
-
-
-            return JsonResponse({'tabela':to_updade})
+        return JsonResponse({'tabela':to_updade})
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
 
 

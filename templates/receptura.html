@@ -82,6 +82,26 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="zaDuzoSkladnikowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="zaDuzoSkladnikowLabel">Przekroczona ilośc składników</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Maksymalna ilośc składników wynosi 10.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="location.href='{% url 'mojerec' %}'" >Przejdź do spisu twoich receptur</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ModalEnd -->
+
 <div id="pk-box">
     {{receptura.pk}}
 </div>
