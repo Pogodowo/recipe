@@ -6,7 +6,7 @@ class Receptura (models.Model):
     rodzaje=(('1','Maść'),('2','czopki i globulki'),('3','receptura płynna'))
     czop_czy_glob=(('1','czopki'),('2','globulki'))
     tak_czy_nie = (('1', 'tak'), ('2', 'nie'))
-    nazwa=models.CharField( max_length=30)
+    nazwa=models.CharField( max_length=20)
     date=models.DateTimeField(auto_now_add=True)
     rodzaj=models.TextField(choices=rodzaje,blank=True, null=True)
     czopki_czy_globulki=models.TextField(choices=czop_czy_glob, blank=True, null=True)

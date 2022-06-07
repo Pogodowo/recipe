@@ -17,14 +17,35 @@ from reportlab.lib.units import mm,cm
 from django.conf import settings
 from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, NextPageTemplate, Paragraph, PageBreak, Table, \
     TableStyle
+from recipes.słownik_do_tabeli import table_dict
 
 
 def to_pdf(request,pk):
     receptura = Receptura.objects.get(id=int(pk))
 
     Skladniki = Skladnik.objects.filter(receptura_id=int(pk))
-    do_tabeli=[[receptura.nazwa,receptura.date],[receptura.rodzaj,receptura.czopki_czy_globulki,receptura.ilosc_czop_glob,receptura.masa_docelowa_czop_glob]]
+    do_tabeli=[['nazawa: '+ receptura.nazwa,receptura.date.strftime(" data utworzenia: %d-%m-%y godz: %H:%M") ],]
+    rodzaj=''
+    ilosc_czop_glob=''
+    masa_czop_glob = ''
+    if receptura.rodzaj!='czopki_i_globulki':
+        rodzaj='rodzaj: '+ table_dict[receptura.rodzaj]
+        #rodzaj = 'rodzaj: ' + słownik_do_tabeli['masc']
+        do_tabeli2 = [[rodzaj]]
+        brackets=[510]
+    else:
 
+        rodzaj='rodzaj: '+receptura.czopki_czy_globulki
+        if receptura.czopki_czy_globulki=='czopki':
+            ilosc_czop_glob='ilość czopków: '+receptura.ilosc_czop_glob
+            masa_czop_glob='masa pojedynczego czopka: '+receptura.masa_docelowa_czop_glob+' g.'
+        else:
+            ilosc_czop_glob = 'ilość globulek: ' + receptura.ilosc_czop_glob
+            masa_czop_glob = 'masa pojedynczej globulki: ' + receptura.masa_docelowa_czop_glob+' g.'
+        do_tabeli2 = [[rodzaj, ilosc_czop_glob, masa_czop_glob]]
+        brackets = [170, 170,170]
+
+    #do_tabeli2 = [[rodzaj, ilosc_czop_glob,masa_czop_glob]]
 
 
     print('do_tabeli',do_tabeli)
@@ -34,24 +55,42 @@ def to_pdf(request,pk):
     p = canvas.Canvas(buffer, pagesize=A4)
     reportlab.rl_config.TTFSearchPath.append(str(settings.BASE_DIR) + '/to_pdf')
     pdfmetrics.registerFont(TTFont('polishFont', 'polishFont.ttf'))
-    p.setFont('polishFont', 32)
-    p.drawString(130, 780, 'Receptura '+receptura.nazwa+' '+test)
+    pdfmetrics.registerFont(TTFont('AbhayaLibre-Regular', 'AbhayaLibre-Regular.ttf'))
+    p.setFont('AbhayaLibre-Regular', 32)
+    x=250-len('Receptura '+receptura.nazwa[:24]+' ')*6
+    p.drawString(x, 780, 'Receptura:'+receptura.nazwa[:24]+' ')
 
     # ======================================tabela==============================================
+    name_bracket_size=90
+    date_bracket_size=90
+    # if len(receptura.nazwa[:24])*6>70:
+    #     name_bracket_size=len(receptura.nazwa[:24])*4
 
     width = 500
     height = 500
     x = 30
-    y=700
+    y=730
     #y = b - (a * 15)
-    table = Table(do_tabeli, colWidths=[50 * mm, 40* mm, 40 * mm, 40 * mm])
+    table = Table(do_tabeli, colWidths=[name_bracket_size * mm, date_bracket_size* mm,])
 
-    ts = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.transparent), ('FONT', (0, 0), (-1, -1), 'polishFont', 13),
+    ts = TableStyle([('GRID', (0, 0), (-1, -1), 0.5, colors.black), ('FONT', (0, 0), (-1, -1), 'AbhayaLibre-Regular', 13),
                      ('ALIGN', (0, 0), (-1, -1), 'CENTER'), ('VALIGN', (0, 0), (-1, -1), 'TOP')])
     table.setStyle(ts)
 
     table.wrapOn(p, width, height)
     table.drawOn(p, x, y)
+    x = 30
+    y = 705
+    # y = b - (a * 15)
+    table1 = Table(do_tabeli2, colWidths=brackets)
+
+    ts = TableStyle(
+        [('GRID', (0, 0), (-1, -1), 0.5, colors.black), ('FONT', (0, 0), (-1, -1), 'AbhayaLibre-Regular', 13),
+         ('ALIGN', (0, 0), (-1, -1), 'CENTER'), ('VALIGN', (0, 0), (-1, -1), 'TOP')])
+    table1.setStyle(ts)
+
+    table1.wrapOn(p, width, height)
+    table1.drawOn(p, x, y)
     #===========================recepta================================================================================
     x=30
     y=600
@@ -59,19 +98,22 @@ def to_pdf(request,pk):
     p.drawString(x, y, 'Rp.')
     y=580
     def skladnik(skl):
-        str=''
+        stri=''
         if skl.show==True:
-            str=str+skl.skladnik+' '
+            stri=stri+skl.skladnik+' '
             if skl.aa=='on':
-                str=str+' aa'
+                stri=stri+' aa'
             elif skl.qs=='on':
-                str=str+' qs'
+                stri=stri+' qs'
             elif skl.ad=='on':
-                str=str+' ad'
+                stri=stri+' ad'
             elif skl.aa_ad=='on':
-                str=str+' aa ad '
-            str=str+' '+skl.ilosc_na_recepcie
-        return str
+                stri=stri+' aa ad '
+            if  skl.ilosc_na_recepcie!='' and float(skl.ilosc_na_recepcie)%1==0 :
+                stri=stri+' '+format(float(skl.ilosc_na_recepcie), '.1f')
+            elif  skl.ilosc_na_recepcie!='' and float(skl.ilosc_na_recepcie)%1!=0 :
+                stri=stri+' '+ str(round(float(skl.ilosc_na_recepcie), 3))
+        return stri
     for i in Skladniki:
         p.drawString(x, y, skladnik(i))
         y=y-15

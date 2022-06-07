@@ -34,7 +34,7 @@ console.log('csrf',csrf)
 console.log('closeXButton',closeXButton)
 updateTable()
 
-var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina","Mocznik","Woda destylowana","Etanol"
+var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
 ,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%']
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
@@ -450,7 +450,8 @@ function updateTable(){
             else if(item.fields.qs==='on'){div.innerHTML+='qs '}
             else if(item.fields.jednostka_z_recepty==='gramy_roztworu'){div.innerHTML+='sol. '}
             else if(item.fields.jednostka_z_recepty==='krople'){div.innerHTML+='gutt. '}
-            if (item.fields.ilosc_na_recepcie!=='') {div.innerHTML+=parseFloat(item.fields.ilosc_na_recepcie).toFixed(1)}//10.toFixed(2)
+            if (item.fields.ilosc_na_recepcie!=='' && parseFloat(item.fields.ilosc_na_recepcie)%1==0) {div.innerHTML+=parseFloat(item.fields.ilosc_na_recepcie).toFixed(1)}//10.toFixed(2)
+            else if (item.fields.ilosc_na_recepcie!=='' && parseFloat(item.fields.ilosc_na_recepcie)%1!=0) {div.innerHTML+=item.fields.ilosc_na_recepcie}
             if (item.fields.jednostka_z_recepty==='jednostki') {div.innerHTML+=' j.m.'}
             console.log('div',div);
             div.appendChild(deleteButton);
