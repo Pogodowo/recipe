@@ -34,7 +34,7 @@ console.log('csrf',csrf)
 console.log('closeXButton',closeXButton)
 updateTable()
 
-var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
+var ingridients=["Vitaminum A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
 ,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%']
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
@@ -544,8 +544,12 @@ function updateTable(){
             div=document.createElement('div');
             div.innerHTML='<br>M.f. Ung. ';
             tabelaDocelowa.appendChild(div)
-
+            }else if (param['rodzaj']==='receptura_plynna_wewnetrzna' || param['rodzaj']==='receptura_plynna_zewnetrzna'){
+            div=document.createElement('div');
+            div.innerHTML='<br>M.f. Sol. ';
+            tabelaDocelowa.appendChild(div)
             }
+
 
             if (alerty!=null && alerty['alert']!=''){alert(alerty['alert'])}
             },
@@ -639,7 +643,7 @@ function generowanieFormularzaDoEdycji (item){
                 })
             }else{
 
-            if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych'].includes(item)){
+            if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych','czy_zlozyc_roztwor_ze_skladnikow_prostych','czy_powiekszyc_mase_oleum'].includes(item)){
             const label=document.createElement('label')
             label.textContent=item
             const check = document.createElement("input");

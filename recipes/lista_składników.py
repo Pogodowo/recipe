@@ -1,4 +1,4 @@
-data={'witamina A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki'],'ilosc_na_recepcie',['producent','Hasco 45000j.m./ml','Medana 50000j.m./ml'],['gestosc','1.082','1.083','1.0','1.14','1.145','1.146','1.147','1.148','1.149','1.50']],
+data={'Vitaminum A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki'],'ilosc_na_recepcie',['producent','Hasco 45000j.m./ml','Medana 50000j.m./ml'],['gestosc','1.082','1.083','1.0','1.14','1.145','1.146','1.147','1.148','1.149','1.50']],
       'witamina E':[['jednostka_z_recepty','gramy_roztworu','krople','gramy_czystej_vit_e'],'ilosc_na_recepcie',['producent','Hasco 0,3g/ml','Medana 0,3g/ml'],['gestosc','0.928','0.929','0.930','0.931']],
       'Hydrokortyzon':['ilosc_na_recepcie','aa'],
       'Detreomycyna':['ilosc_na_recepcie','aa'],

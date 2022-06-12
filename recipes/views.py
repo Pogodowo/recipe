@@ -233,7 +233,7 @@ def dodajsklJson (request,sklId):
                 #=================przelicanie witamin======================================
                 print('new_skl.skladnik',new_skl.skladnik)
                 sys.stdout.flush()
-                if new_skl.skladnik=='witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
+                if new_skl.skladnik=='Vitaminum A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
                    to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
                 print('to_ptade bo nie wiem gdzie te gramy',to_updade)
                 sys.stdout.flush()
@@ -380,7 +380,7 @@ def aktualizujTabela (request,sklId):
             print('skladnik_z_ad .aa_ad_gramy', skladnik_z_ad .aa_ad_gramy)
             sys.stdout.flush()
             if skladnik_z_ad.ilosc_na_recepcie=='' or float(skladnik_z_ad.ilosc_na_recepcie)<Sumskl(sklId):
-                alerty['alert']='ilość dodanego skłądnika z ad musi być większ niż masa dotychczasowych skladników'
+                alerty['alert']='ilość dodanego składnika z ad musi być większ niż masa dotychczasowych skladników'
                 skladnik_z_ad.delete()
                 jest_ad = False
             else:
@@ -704,7 +704,7 @@ def edytujsklJson (request,sklId):
                 # if 'dodaj_wode' in to_updade:
                 #     to_updade['aa_ad_gramy']=to_updade['gramy']
                 # to_updade=Przeliczanie(dodanySkladnik,to_updade)
-                if to_edit['skladnik'] == 'witamina A' or to_edit['skladnik'] == 'witamina E' or to_edit['skladnik'] == 'Oleum Menthae piperitae' or to_edit['skladnik'] == 'Nystatyna':
+                if to_edit['skladnik'] == 'Vitaminum A' or to_edit['skladnik'] == 'witamina E' or to_edit['skladnik'] == 'Oleum Menthae piperitae' or to_edit['skladnik'] == 'Nystatyna':
                     to_edit = PrzeliczanieWit(to_edit['skladnik'], to_edit, receptura.rodzaj, receptura.ilosc_czop_glob)
                     print('to_edit', to_edit, 'to_updade,rodzaj,ilosc', 'receptura',sklreceptury, receptura.rodzaj, receptura.ilosc_czop_glob)
                     sys.stdout.flush()

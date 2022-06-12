@@ -1,5 +1,5 @@
 import sys
-slownik_wyswietlane_dane={'witamina A':['solutio','krople','jednostki'],
+slownik_wyswietlane_dane={'Vitaminum A':['solutio','krople','jednostki'],
                           'witamina E':['solutio','krople','gramy']
                       ,'Hydrokortyzon':['gramy'],'Wazelina':['gramy'],
                           'Etanol':['gramy','uzyte_stezenie','pozadane_stezenie','ilosc_etanolu','ilosc_wody_do_etanolu'],
