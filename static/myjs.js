@@ -30,8 +30,9 @@ parametryRecBox=document.getElementById('parametry')
 const delCardButton=document.getElementById('button-del')
 const edCardButton=document.getElementById('button-ed')
 toPdfButton=document.getElementById("toPdfButton")
-console.log('csrf',csrf)
-console.log('closeXButton',closeXButton)
+//const listaSkladnikowDrop=document.getElementById("lista-dropdown" )
+
+
 updateTable()
 
 var ingridients=["Vitaminum A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
@@ -769,6 +770,7 @@ closeButton.addEventListener('click',e=>{console.log('kliknąłem close ');$("#e
                                            removeElementsByClass('elFormDelete'); })
 closeXButton.addEventListener('click',e=>{console.log('kliknąłem x close ');$("#exampleModal").modal('hide');
                                            removeElementsByClass('elFormDelete'); })
+
 
 modalBox.addEventListener('hidden.bs.modal', function (event) {
     removeElementsByClass('elFormDelete');

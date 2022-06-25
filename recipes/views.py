@@ -6,7 +6,7 @@ from django.contrib import messages
 from .lista_składników import data
 import sys
 from .słownik_do_tabeli import table_dict
-
+from django.contrib.auth.decorators import login_required
 from .models import Receptura,Skladnik
 from .forms import RecepturaForm,CzopkiGlobulkiForm
 from .obliczenia import Przeliczanie_etanolu,Kasowanie_wody,Sumowanie_wody,Sumskl
@@ -22,7 +22,7 @@ def home (request):
     sys.stdout.flush()
     return render (request,'home.html')
 
-
+#@login_required
 def mojeRec (request):
     if not request.session.exists(request.session.session_key):
         request.session.create()
@@ -123,11 +123,26 @@ def ParamRecJson(request ,recId):
     sys.stdout.flush()
     return JsonResponse({'parametry': parametry})
 
-
+#@login_required
 def receptura (request,receptura_id):
-    receptura=Receptura.objects.get(id=receptura_id)
-    context={'receptura':receptura}
-    return render(request,'receptura.html',context)
+    current_user=None
+    session=None
+    if request.user.is_authenticated:
+        current_user = request.user
+    else:
+        session = request.session.session_key
+    try:
+        receptura=Receptura.objects.get(id=receptura_id)
+        if request.user.is_authenticated and receptura in Receptura.objects.filter(owner=current_user):
+            context={'receptura':receptura}
+            return render(request,'receptura.html',context)
+        elif  request.user.is_authenticated is False and receptura in Receptura.objects.filter(session=session):
+            context = {'receptura': receptura}
+            return render(request, 'receptura.html', context)
+        else:
+            return render(request, '404.html',)
+    except Receptura.DoesNotExist:
+        return render(request, '404.html', )
 
 def formJson (request,skl):
     #skl zawiera tutaj nazwę składnika i id receptury
@@ -173,7 +188,7 @@ def dodajsklJson (request,sklId):
         ilosc=request.POST.get("ilosc_na_recepcie")
         all = Skladnik.objects.filter(receptura_id=int(sklId))
         to_updade={}
-        if len(all)<4:
+        if len(all)<11:
             ###########sprawdzanie czy jest woda################
             woda=None
             jestwoda = False
@@ -260,7 +275,7 @@ def dodajsklJson (request,sklId):
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
 
 
-
+#@login_required
 def aktualizujTabela (request,sklId):
     gramy_po_podziale = 0
     alerty={'alert': ''}
