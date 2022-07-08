@@ -10,6 +10,9 @@
 
 {% block content %}
 <br><br>
+<div id="brak-receptur">
+
+</div>
 <div class="cards-rec-container">
   {% for i in receptury %}
   <div class="cont">
@@ -57,10 +60,14 @@
 </div>
 
 </div>
+    {% empty %}
+    <h1>Na razie brak receptur</h1>
 {% endfor %}
 </div>
 <script src="{% static 'spisrec.js' %}"> </script>
 {% endblock %}
-<div id="tabela-moje-rec"> </div>
+<div id="tabela-moje-rec">
+
+</div>
 </body>
 </html>

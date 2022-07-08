@@ -1,7 +1,10 @@
 import sys
-slownik_wyswietlane_dane={'Vitaminum A':['solutio','krople','jednostki'],
+slownik_wyswietlane_dane={'Vitaminum A':['gramy_roztworu','krople','jednostki'],
                           'witamina E':['solutio','krople','gramy']
-                      ,'Hydrokortyzon':['gramy'],'Wazelina':['gramy'],
+                      ,'Hydrokortyzon':['gramy'],'Wazelina':['gramy']
+                    ,'Metronidazol':['gramy'],
+                          "Detreomycyna":['gramy'],
+                        'Mocznik':['gramy'],
                           'Etanol':['gramy','uzyte_stezenie','pozadane_stezenie','ilosc_etanolu','ilosc_wody_do_etanolu'],
                           'Woda destylowana':['ilosc_wody_do_etanolu','calkowita_ilosc_gramow_wody']}
 

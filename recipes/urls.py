@@ -23,6 +23,9 @@ urlpatterns = [
     path('dodawanieRecJson/', views.dodawanieRecJson, name='dodawanieRecJson'),
     path('usunRec/<str:id>/', views.usunRec, name='usunRec'),
     path('receptura/paramRec/<str:recId>/', views.ParamRecJson, name='ParamRecJson'),
+    path('receptura/obliczeniaOlCac/<str:sklId>/', views.obliczeniaOlCac, name='obliczeniaOlCac'),
+    path('receptura/obliczeniaEt/<str:sklId>/', views.obliczeniaEt, name='obliczeniaEt'),
+
 
 
 

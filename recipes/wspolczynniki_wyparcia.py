@@ -1,1 +1,1 @@
-wspolczynniki_wyparcia={'Metronidazol':0.7,'Hydrokortyzon':0.7,'Mocznik':0.7,'witamina A':0.7,'Nystatyna':0.7,'witamina E':0.7}
+wspolczynniki_wyparcia={'Metronidazol':0.7,'Hydrokortyzon':0.7,'Mocznik':0.7,'Vitaminum A':0.7,'Nystatyna':0.7,'witamina E':0.7,'Rezorcyna':0.7}

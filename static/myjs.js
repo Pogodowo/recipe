@@ -6,6 +6,8 @@ const modalTytul=document.getElementById("exampleModalLabel")
 const formBox= document.getElementById('modal-form')
 const closeXButton=document.getElementById('close-x')
 const closeButton=document.getElementById('close-button')
+
+const oblEtButton=document.getElementById('button-obl-el')
 const dodajSkladnikButton=document.getElementById("dodajsklbutton")
 const prowizorycznatabelaBox=document.getElementById('prowizorycznatabela')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
@@ -176,6 +178,7 @@ function generowanieFormularza (){
           skl=inputBox.value;
           console.log('skladnikform',skl);
           modalTytul.innerText=inputBox.value;
+          if (ingridients.includes(inputBox.value)){
            $("#exampleModal").modal('show');
            ////////////////ajax pobieranie elementów formularza///////////////////////////////
 
@@ -213,7 +216,10 @@ function generowanieFormularza (){
                 console.log(item[0])
                 slicedArray.map(elem=>{
                 const option=document.createElement('option')
-                option.textContent = elem
+                option.value = elem
+                if(dict.hasOwnProperty(elem)){option.textContent = dict[elem]}else{option.textContent = elem}
+                //option.textContent = dict[elem]
+
                 optionBox.appendChild(option)
                 })
             }else{
@@ -243,6 +249,7 @@ function generowanieFormularza (){
             input.setAttribute('class','elFormDelete')
             label.setAttribute('class','elFormDelete')
             input.setAttribute('type','number')
+            //input.setAttribute('onkeydown',"javascript: return ['Backspace','Delete','ArrowLeft','ArrowRight'].includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'")
             input.setAttribute("min","0")
             input.setAttribute('max',"99999")
             input.setAttribute('id',`${skl}-${item}`)
@@ -284,7 +291,14 @@ function generowanieFormularza (){
             error : function (response){
             console.log('error', error)}
             })
-            }
+            }else{ modalTytul.innerText="";
+            const label=document.createElement('label');
+            label.setAttribute('class','elFormDelete');
+            label.textContent="Wpisz poprawny składnik"
+            dodajSkladnikButton.style.visibility = "hidden"
+            formBox.appendChild(label)
+
+            $("#exampleModal").modal('show');}}
 
 
 
@@ -397,14 +411,16 @@ function updateTable(){
         for (const [key, value] of Object.entries(param)){ if ( value!=null && value!='0' && value!=''  ){
                const div=document.createElement('div')
                   div.setAttribute('class','flex-item-param')
-                  if (key in slownik & key=='date'){console.log('jest w słowniku')
+                  if (slownik.hasOwnProperty(key) & key=='date'){console.log('jest w słowniku')
                   div.innerHTML+=' '+slownik[key]+': '
                   div.innerHTML+=value.slice(0,16).replace('T',' godz:')}
                   else if (key=='rodzaj'  & value=='czopki_i_globulki'){console.log('jest w słowniku')
                   }
-                  else if (key in slownik ){console.log('jest w słowniku')
-                  div.innerHTML+=' '+slownik[key]+': '
+                  else if (slownik.hasOwnProperty(key)){console.log('jest w słowniku')
+                  div.innerHTML+=' '+slownik[key]+': ';
+                  if (slownik.hasOwnProperty(value)){div.innerHTML+=slownik[value]}else{
                   div.innerHTML+=value}
+                  }
                   else{
                   div.innerHTML+=' '+key+': '
                   div.innerHTML+=value}
@@ -445,11 +461,11 @@ function updateTable(){
             if (item.fields.show===true){
             div.innerHTML+= numElem+') ' + item.fields.skladnik+'  '
             if (item.fields.skladnik==='Etanol'){div.innerHTML+=item.fields.pozadane_stezenie+'° '}
+            if(item.fields.jednostka_z_recepty==='gramy_roztworu'){div.innerHTML+='sol. '}
             if (item.fields.aa==='on'){div.innerHTML+='aa '}
             else if(item.fields.aa_ad==='on'){div.innerHTML+='aa ad '}
             else if(item.fields.ad==='on'){div.innerHTML+='ad '}
             else if(item.fields.qs==='on'){div.innerHTML+='qs '}
-            else if(item.fields.jednostka_z_recepty==='gramy_roztworu'){div.innerHTML+='sol. '}
             else if(item.fields.jednostka_z_recepty==='krople'){div.innerHTML+='gutt. '}
             if (item.fields.ilosc_na_recepcie!=='' && parseFloat(item.fields.ilosc_na_recepcie)%1==0) {div.innerHTML+=parseFloat(item.fields.ilosc_na_recepcie).toFixed(1)}//10.toFixed(2)
             else if (item.fields.ilosc_na_recepcie!=='' && parseFloat(item.fields.ilosc_na_recepcie)%1!=0) {div.innerHTML+=item.fields.ilosc_na_recepcie}
@@ -471,7 +487,7 @@ function updateTable(){
           //card.setAttribute('style','width: 36rem;')
 
    var ul=document.createElement('ul')
-        ul.setAttribute('class','list-group list-group-flush')
+        ul.setAttribute('class','list-group list-group-skl')
    var li=document.createElement('li')
         li.setAttribute('class','list-group-item')
    var span=document.createElement('span')
@@ -487,9 +503,25 @@ function updateTable(){
        buttonEd.innerText='Edytuj'
        buttonEd.setAttribute('class','btn btn-primary mt-1 button-card')
        buttonEd.setAttribute('id','button-ed')
-
+   if (item.fields.skladnik=='Etanol'|| item.fields.skladnik=="Oleum Cacao"){
+   var buttonObl=document.createElement('button')
+       buttonObl.innerText='Obliczenia'
+       buttonObl.setAttribute('class','btn btn-secondary mt-1 button-card')
+       if (item.fields.skladnik=='Etanol'){buttonObl.setAttribute('id','button-obl-et');
+        buttonObl.onclick = function() { $("#oblEtModal").modal('show');
+         oblEt();}
+       }
+       else if  (item.fields.skladnik=="Oleum Cacao"){
+       buttonObl.setAttribute('id','button-obl-ol');
+       buttonObl.onclick = function() { $("#oblOlModal").modal('show');
+       oblOlCacao();}
+       }
+       }
        li.appendChild(buttonDel)
        li.appendChild(buttonEd)
+       if(buttonObl!=null){li.appendChild(buttonObl)}
+//
+//       }
        li.append(span)
        ul.appendChild(li)
 
@@ -504,9 +536,21 @@ function updateTable(){
 
         /////////wypisywanie atrybutów danego składnika/////
 
-        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!=''  ){
-        //for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!='' && display[item.fields.skladnik].includes(key) ){
-                //console.log('key,item.fields.skladnik',key,item.fields.skladnik,'display[item.fields.skladnik]',display[item.fields.skladnik])
+//        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!=''  ){
+//               const div=document.createElement('div')
+//                  div.setAttribute('class','flex-item')
+//                  if (key in slownik){console.log('jest w słowniku')
+//                  div.innerHTML+=' '+slownik[key]+': '
+//                  div.innerHTML+=value}else{
+//                  div.innerHTML+=' '+key+': '
+//                  div.innerHTML+=value}
+//             li2.appendChild(div)
+//                                                    }}
+        ///////////////////////////////////////////////////
+        /////////wypisywanie wybranych atrybutów do karty///////////////////////////////////
+
+        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0' && value!='' && display[item.fields.skladnik].includes(key) ){
+                console.log('key,item.fields.skladnik',key,item.fields.skladnik,'display[item.fields.skladnik]',display[item.fields.skladnik])
                const div=document.createElement('div')
                   div.setAttribute('class','flex-item')
                   if (key in slownik){console.log('jest w słowniku')
@@ -516,7 +560,7 @@ function updateTable(){
                   div.innerHTML+=value}
              li2.appendChild(div)
                                                     }}
-        ///////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ul.appendChild(li2)
         card.appendChild(ul)
@@ -609,6 +653,7 @@ function generowanieFormularzaDoEdycji (item){
             success : function(response){
             console.log('succes spobrania do forma', response);
             var elementyForm = response.datadict.form
+            var dict=response.slownik
            console.log('elementyForm z gen form',elementyForm)
 
             elementyForm.map(item=>{
@@ -617,7 +662,7 @@ function generowanieFormularzaDoEdycji (item){
                 const div=document.createElement('div')
                 div.setAttribute('class', 'elFormDelete input-field-form')
                 const label=document.createElement('label')
-                label.textContent=item[0]
+                label.textContent=dict[item[0]]
                 label.setAttribute('class','elFormDelete');
                 const select=document.createElement('select');
                 select.setAttribute('class',"ui dropdown");
@@ -639,6 +684,7 @@ function generowanieFormularzaDoEdycji (item){
                 const option=document.createElement('option')
                 option.textContent = elem
                 option.value=elem
+                if(dict.hasOwnProperty(elem)){option.textContent = dict[elem]}else{option.textContent = elem}
                 optionBox.appendChild(option)
                 optionBox.value=response.datadict.values[item[0]]
                 })
@@ -646,7 +692,7 @@ function generowanieFormularzaDoEdycji (item){
 
             if (['aa','aa_ad','dodaj_wode','ad','qs','czy_zlozyc_roztwor_ze_skladnikow_prostych','czy_zlozyc_roztwor_ze_skladnikow_prostych','czy_powiekszyc_mase_oleum'].includes(item)){
             const label=document.createElement('label')
-            label.textContent=item
+            label.textContent=dict[item]
             const check = document.createElement("input");
             check.setAttribute('type',"checkbox")
             if (response.datadict.values[item]==='on'){check.checked = true;
@@ -661,8 +707,8 @@ function generowanieFormularzaDoEdycji (item){
             label.setAttribute('class','elFormDelete')
             //check.setAttribute('class','checkBox')
             //check.setAttribute('name','checkBox')
-            formBox.appendChild(check)
             formBox.appendChild(label)
+            formBox.appendChild(check)
             console.log('checkvalue',check.value)
             } else
             {
@@ -676,8 +722,8 @@ function generowanieFormularzaDoEdycji (item){
             console.log('idwimpucie',`${skl}-${item}`)
             const br=document.createElement('br')
             br.setAttribute('class','elFormDelete')
-            label.textContent=item
-            if(input.value=response.datadict.values[item]!=''){
+            label.textContent=dict[item]
+            if(response.datadict.values[item]!='' || response.datadict.values['qs']=='on'){
             input.value=response.datadict.values[item]
             formBox.appendChild(label)
             formBox.appendChild(input)
@@ -730,6 +776,7 @@ function edytowanieSkl(){
                 dataf[elementyForm[i]]=document.getElementById(`${skl}-${elementyForm[i]}`).value}
                 console.log('elementyForm2',elementyForm)
                 console.log('dataf',dataf)
+                if (dataf['skladnik']=="Oleum Cacao" && dataf['qs']=='on'){dataf['ilosc_na_recepcie']=''}
 
                 $.ajax({
                 type: 'POST' ,
@@ -737,9 +784,9 @@ function edytowanieSkl(){
                 data : dataf,
                 success: function(response){
                          console.log('wygrywamy');
-                         console.log('response.tabela',response.tabela)
-                         tabelaDocelowa.innerHTML=''
-                         updateTable()
+                         console.log('response.tabela',response.tabela);
+                         tabelaDocelowa.innerHTML='';
+                         updateTable();
                                         },
                 error : function(error){
                          console.log(' dupa nie działa');
@@ -758,6 +805,30 @@ function edytowanieSkl(){
 
                     /////tu koniec wstawania//////
 
+function oblOlCacao(){ $.ajax({
+            type: 'GET',
+            url:`obliczeniaOlCac/${sklId}/`,
+            success : function(response){
+            console.log('działa obl cacao')
+            const oblOlText=document.getElementById( "ol-obl-text")
+            oblOlText.innerHTML=response.tabela
+
+            },
+            error : function(response){},
+            })
+            }
+function oblEt(){ $.ajax({
+            type: 'GET',
+            url:`obliczeniaEt/${sklId}/`,
+            success : function(response){
+            console.log('działa et')
+            const oblEtText=document.getElementById( "ol-et-text")
+            oblEtText.innerHTML=response.tabela
+            },
+            error : function(response){},
+            })
+            }
+
 
 
 
@@ -770,6 +841,11 @@ closeButton.addEventListener('click',e=>{console.log('kliknąłem close ');$("#e
                                            removeElementsByClass('elFormDelete'); })
 closeXButton.addEventListener('click',e=>{console.log('kliknąłem x close ');$("#exampleModal").modal('hide');
                                            removeElementsByClass('elFormDelete'); })
+
+//const oblOlButton=document.getElementById('button-obl-ol');
+//oblOlButton.addEventListener('click', $("#oblOlModal").modal('show'));
+
+
 
 
 modalBox.addEventListener('hidden.bs.modal', function (event) {

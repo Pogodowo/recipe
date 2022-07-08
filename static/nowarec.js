@@ -27,7 +27,7 @@ function generowanieFormularzaRecepty (){
             var elementyForm = response.fields.common
             var slownik=response.fields.slownik
 
-           console.log('elementyForm z gen form',elementyForm)
+           console.log('slownik',slownik)
            if (elementyForm!="ten składnik już został dodany"){
             elementyForm.map(item=>{
             if(Array.isArray(item)){if (item[0]==='producent'){
@@ -80,7 +80,9 @@ function generowanieFormularzaRecepty (){
                 console.log(item[0])
                 slicedArray.map(elem=>{
                 const option=document.createElement('option')
-                option.textContent = elem
+                option.value = elem
+                if(slownik.hasOwnProperty(elem)){option.textContent = slownik[elem]}else{option.textContent = elem}
+                //option.textContent = elem
                 optionBox.appendChild(option)
                 })}
                 }

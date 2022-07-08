@@ -9,11 +9,13 @@ from .słownik_do_tabeli import table_dict
 from django.contrib.auth.decorators import login_required
 from .models import Receptura,Skladnik
 from .forms import RecepturaForm,CzopkiGlobulkiForm
-from .obliczenia import Przeliczanie_etanolu,Kasowanie_wody,Sumowanie_wody,Sumskl
+from .obliczenia import Przeliczanie_etanolu,Kasowanie_wody,Sumowanie_wody,Sumskl,get_super
+from .tabela_etanolowa import tabela_etanolowa
 from .connon_fields import fields
 from .wspolczynniki_wyparcia import wspolczynniki_wyparcia
 from .przelWitamin import PrzeliczanieWit
 from .wyswietlane_dane import wyswietlane_dane
+from colorama import Fore, Style
 
 def home (request):
     if not request.session.exists(request.session.session_key):
@@ -91,7 +93,7 @@ def dodawanieRecJson(request):
         if len(this_session_rec)>0:
             this_session_rec.delete()
         new_skl=None
-        if ilosc_receptur<5 or request.user.is_anonymous is True:
+        if ilosc_receptur<15 or request.user.is_anonymous is True:
             new_skl=Receptura.objects.create(owner=user,nazwa=nazwa,rodzaj=rodzaj)#Session.objects.get(session_key=request.session.session_key)
             print( 'ciekawe czy się wyprintuje dwa razy')#new_skl=Receptura.objects.create(owner=user,nazwa=nazwa,rodzaj=rodzaj)#Session.objects.get(session_key=request.session.session_key)
             sys.stdout.flush()
@@ -248,7 +250,7 @@ def dodajsklJson (request,sklId):
                 #=================przelicanie witamin======================================
                 print('new_skl.skladnik',new_skl.skladnik)
                 sys.stdout.flush()
-                if new_skl.skladnik=='Vitaminum A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik':
+                if (new_skl.skladnik=='Vitaminum A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik') and to_updade['ilosc_na_recepcie']!='' :
                    to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
                 print('to_ptade bo nie wiem gdzie te gramy',to_updade)
                 sys.stdout.flush()
@@ -259,7 +261,7 @@ def dodajsklJson (request,sklId):
                 print('new_skl.gramy bo nie wiem gdzie te gramy', new_skl.gramy)
                 sys.stdout.flush()
                 ####################dodawanie aut aa bo w uptade Table trzeba było odświerzać to dodaję tu
-                if previous_skl != None and previous_skl.gramy == '' and new_skl.gramy != '':
+                if previous_skl != None and previous_skl.gramy == '' and new_skl.gramy != '' and new_skl.ilosc_na_recepcie.isnumeric() :
                     new_skl.aa = 'on'
                     new_skl.save()
                 #############zamienianie ad na aa_ad jeżeli nie podano wartości w poprzednim składniku############
@@ -279,9 +281,11 @@ def dodajsklJson (request,sklId):
 def aktualizujTabela (request,sklId):
     gramy_po_podziale = 0
     alerty={'alert': ''}
+    skl_previous_aa_ad=None
     previous_skl=None
     if len(Skladnik.objects.filter(receptura_id=int(sklId)))>1:
         previous_skl = Skladnik.objects.filter(receptura_id=int(sklId)).order_by('-pk')[1]
+
     last=None
     last=Skladnik.objects.filter(receptura_id=int(sklId)).last()
     receptura = Receptura.objects.get(id=int(sklId))
@@ -470,6 +474,9 @@ def aktualizujTabela (request,sklId):
                     print(' ob.skladnik', ob.skladnik)
                     print('ob.gramy', ob.gramy)
                     b = b + 1
+                elif ob.show is False:
+                    b=b+1
+                    a=a+1
                 else:
                     b=b+1
 
@@ -676,7 +683,7 @@ def editFormJson(request,skl):
                     datadict['values'][str(j)] = getattr(i, j)
     print('datadict', datadict)
     sys.stdout.flush()
-    context = {'datadict': datadict}
+    context = {'datadict': datadict,'slownik' : table_dict}
     return JsonResponse(context)
 
 def edytujsklJson (request,sklId):
@@ -684,7 +691,9 @@ def edytujsklJson (request,sklId):
         ind = sklId.index('&')
         dodanySkladnik=request.POST.get("skladnik")
         ilosc=request.POST.get("ilosc_na_recepcie")
-        receptura = Receptura.objects.get(id=int(sklId[ind + 1:]))
+        receptura = Receptura.objects.get(pk=int(sklId[ind + 1:]))
+        print('int(sklId[ind + 1:])', int(sklId[ind + 1:]))
+        sys.stdout.flush()
         sklreceptury = Skladnik.objects.filter(receptura_id=int(sklId[ind + 1:]))
         print('edycjareceptura', sklreceptury)
         sys.stdout.flush()
@@ -707,12 +716,21 @@ def edytujsklJson (request,sklId):
                             to_edit[j[0]] = a
                         else:
                             pass
+                    # if receptura['rodzaj']=='czopki_i_globulki':
+                    #     sklreceptury[sklreceptury['jednostka_z_recepty']]=str(float(sklreceptury['ilosc_na_recepcie'])*float(receptura['ilosc_czop_glob']))
                 print('to_edit', to_edit)
                 sys.stdout.flush()
                 # ==========wstawianie gramów==========================
                 if to_edit['jednostka_z_recepty'] == 'gramy':
                     to_edit['gramy'] = ilosc
                     #to_edit['gramy'] = to_edit['ilosc_na_recepcie']
+                print('recepturarrr', receptura)
+                sys.stdout.flush()
+                if receptura.rodzaj == 'czopki_i_globulki' and to_edit['ilosc_na_recepcie']!='':
+                    to_edit[to_edit['jednostka_z_recepty']] = str(round(
+                    float(to_edit['ilosc_na_recepcie']) * float(receptura.ilosc_czop_glob),3))
+
+
                 # =====================================================
                 if 'aa_ad' in to_edit:
                     to_edit['aa_ad_gramy'] = to_edit['gramy']
@@ -748,3 +766,47 @@ def usunRec (request,id):
 
 
 
+def obliczeniaOlCac(request,sklId):
+    skladniki = Skladnik.objects.filter(receptura_id=int(sklId))
+    receptura = Receptura.objects.get(id=int(sklId))
+    print('receptura Obl Ol', receptura)
+    sys.stdout.flush()
+    print('skladniki', skladniki)
+    sys.stdout.flush()
+    obl=''
+    a='dddd'
+    temp='$8^{a}'
+    for i in skladniki:
+        if i.skladnik!='Oleum Cacao':
+            obl = obl +  " + "+i.gramy +'g. '+ get_super('('+'ilosc gramow '+i.skladnik+ ')') + " x " +str(wspolczynniki_wyparcia[i.skladnik])+  ' '+get_super('('+'wspolczynnik wypacia '+i.skladnik+ ')')
+    obl = obl + ' = '
+    for i in skladniki:
+        if i.skladnik!='Oleum Cacao':
+            obl = obl +str(round(float(i.gramy)*float(wspolczynniki_wyparcia[i.skladnik]),3)) + get_super('('+'ilosc gramow '+i.skladnik + " x " +'wspolczynnik wypacia '+i.skladnik +')')+' + '
+    obl = obl[:-3]
+    obl= obl +' = '
+    for i in skladniki:
+        if i.skladnik == 'Oleum Cacao' and i.czy_powiekszyc_mase_oleum == 'off':
+            obl = obl + i.gramy+'.g'
+        elif i.skladnik == 'Oleum Cacao' and i.czy_powiekszyc_mase_oleum == 'on':
+            obl = obl + str(float(i.gramy)-float(receptura.masa_docelowa_czop_glob))+'.g + '+receptura.masa_docelowa_czop_glob+'g.'+get_super('(masa dodatkowego czopka/globulki)') +'= '+i.gramy+'g.'
+
+
+
+    return JsonResponse({'tabela': obl[3:]})
+
+def obliczeniaEt(request,sklId):
+    etanol=None
+    skladniki = Skladnik.objects.filter(receptura_id=int(sklId))
+    for i in skladniki:
+        if i.skladnik=='Etanol':
+            etanol=i
+
+    receptura = Receptura.objects.get(id=int(sklId))
+    obl=''
+    obl+='Ilość potrzebnych gramów etanolu '+ etanol.pozadane_stezenie+'° wynosi '+etanol.gramy+' \n'
+    obl+='Stężenie etanolu jakim dysponujeny  wynosi '+etanol.uzyte_stezenie+'° t.j. '+ tabela_etanolowa[etanol.uzyte_stezenie]+'% w stężeniu wagowym'+'\n'
+    obl+=etanol.gramy+' x '+tabela_etanolowa[etanol.pozadane_stezenie]+'               '+etanol.uzyte_stezenie+' \n'
+    obl += 'to be continued'+' \n'
+
+    return JsonResponse({'tabela': obl})

@@ -109,8 +109,8 @@ def Sumskl(sklId):
                 a = a + float(i.gramy)
 
             if jestwoda == True and woda != None :
-                # if i.skladnik == 'Mocznik'  and float(i.woda_mocznik) > 0:
-                #     a = a - float(i.woda_mocznik)
+                if i.skladnik == 'Mocznik'  and float(i.woda_mocznik) > 0:
+                    a = a + float(i.woda_mocznik)
                 # if i.skladnik == 'Etanol' and skladnik_z_ad.skladnik == 'Etanol' and float(i.ilosc_wody_do_etanolu) > 0:
                 #     a = a - float(i.ilosc_wody_do_etanolu)
                 # if i.skladnik == '3% roztwór kwas borowy'  and i.czy_zlozyc_roztwor_ze_skladnikow_prostych == 'on':
@@ -122,8 +122,8 @@ def Sumskl(sklId):
                 a = a+float(i.gramy)
 
             if jestwoda == True and woda != None :
-                # if i.skladnik=='Mocznik' and float(i.woda_mocznik)>0:
-                #     a=a-float(i.woda_mocznik)
+                if i.skladnik=='Mocznik' and float(i.woda_mocznik)>0:
+                    a=a+float(i.woda_mocznik)
                 # if i.skladnik=='Etanol' and float(i.ilosc_wody_do_etanolu)>0:
                 #     a=a-float(i.ilosc_wody_do_etanolu)
                 # if i.skladnik=='3% roztwór kwas borowy' and float(i.woda_kwas_borowy)>0:
@@ -132,4 +132,12 @@ def Sumskl(sklId):
 
 
 
-    return a
+    return round(a,3)
+
+
+def get_super(x):
+    normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-=()"
+    super_s = "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻᵃᵇᶜᵈᵉᶠᵍʰᶦʲᵏˡᵐⁿᵒᵖ۹ʳˢᵗᵘᵛʷˣʸᶻ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾"
+    res = x.maketrans(''.join(normal), ''.join(super_s))
+    return x.translate(res)
+

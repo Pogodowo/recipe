@@ -43,7 +43,7 @@ def PrzeliczanieWit(dodanySkladnik,to_updade,rodzaj,ilosc):
                 to_updade['gramy'] = str(round((float(to_updade['ilosc_na_recepcie']) / 28) * float(to_updade['gestosc']), 3))
     elif dodanySkladnik == 'Oleum Menthae piperitae':
         if to_updade['jednostka_z_recepty']=='gramy':#'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
-                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) / 51, 3))
+                to_updade['krople'] = str(round(float(to_updade['ilosc_na_recepcie']) * 51, 0))
                 to_updade['mililitry'] = str(round(float(to_updade['ilosc_na_recepcie']) / (float(to_updade['gestosc'])), 3))
         elif to_updade['jednostka_z_recepty']=='krople':#'jednostka_z_recepty','solutio','opakowania','gramy','jednostki'
                 to_updade['gramy'] = str(round(float(to_updade['ilosc_na_recepcie']) * 0.019, 3))
