@@ -105,15 +105,15 @@
 <!-- Modal -->
 <div class="modal fade" id="oblEtModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" id="id-modal-et-content">
       <div class="modal-header">
-
+         Obliczenia Etanolu
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <pre class="modal-body" id="ol-et-text">
-        Obliczenia Etanolu
-      </pre>
+      <div class="modal-body" id="ol-et-text" style="width:0; float:left;" >
+
+      </div>
       <div class="modal-footer">
         <button class="btn btn-primary" onclick="window.print();" >Drukuj</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -147,7 +147,12 @@
     {{receptura.pk}}
 </div>
 
+
+
 <script src="{% static 'myjs.js' %}"> </script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<!--<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock  %}
 </body>
 </html>

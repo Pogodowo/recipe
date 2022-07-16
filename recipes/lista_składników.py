@@ -19,5 +19,8 @@ data={'Vitaminum A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki
       'Nystatyna':[['jednostka_z_recepty','jednostki'],'ilosc_na_recepcie',['UI_w_mg','6357']],
       '3% roztwór kwas borowy':['ilosc_na_recepcie','aa','aa_ad','ad','czy_zlozyc_roztwor_ze_skladnikow_prostych'],
       'Kwas borowy':['ilosc_na_recepcie','aa'],
+      'Maść Cholesterolowa':['ilosc_na_recepcie','aa','aa_ad','ad'],
+      'Balsam Peruwiański':['ilosc_na_recepcie'],
+      'Ichtiol':['ilosc_na_recepcie'],'Bizmutu węglan zasadowy':['ilosc_na_recepcie'],'Bizmutu azotan zasadowy':['ilosc_na_recepcie']
 
       }

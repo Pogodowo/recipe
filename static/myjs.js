@@ -38,7 +38,8 @@ toPdfButton=document.getElementById("toPdfButton")
 updateTable()
 
 var ingridients=["Vitaminum A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
-,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%']
+,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%','Maść Cholesterolowa',
+'Balsam Peruwiański','Ichtiol','Bizmutu węglan zasadowy','Bizmutu azotan zasadowy',]
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -249,7 +250,6 @@ function generowanieFormularza (){
             input.setAttribute('class','elFormDelete')
             label.setAttribute('class','elFormDelete')
             input.setAttribute('type','number')
-            //input.setAttribute('onkeydown',"javascript: return ['Backspace','Delete','ArrowLeft','ArrowRight'].includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'")
             input.setAttribute("min","0")
             input.setAttribute('max',"99999")
             input.setAttribute('id',`${skl}-${item}`)
@@ -278,7 +278,7 @@ function generowanieFormularza (){
             edytujSkladnikButton.style.visibility = "visible"}
             else if (elementyForm=='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik ')
             {const label=document.createElement('label')
-            label.textContent='receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik '
+            label.textContent='receptura zakończona. Ostatni skladnik zawiera ad,qs lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik '
             label.setAttribute('class','elFormDelete')
             formBox.appendChild(label)
             dodajSkladnikButton.style.visibility = "hidden"
@@ -483,13 +483,14 @@ function updateTable(){
 
       card=document.createElement('div')
 
-          card.setAttribute('class','card card-css')
+          card.setAttribute('class','card-css')
           //card.setAttribute('style','width: 36rem;')
 
    var ul=document.createElement('ul')
-        ul.setAttribute('class','list-group list-group-skl')
+        ul.setAttribute('class','list-group-skl')
    var li=document.createElement('li')
-        li.setAttribute('class','list-group-item')
+        li.setAttribute('class','my-card-header')
+        li.setAttribute('style','padding:5px; font-size: 20px; background-color: white; height: 3.5rem; ')
    var span=document.createElement('span')
 //        if (item.fields.skladnik=='3% roztwór kwas borowy' && item.fields.czy_zlozyc_roztwor_ze_skladnikow_prostych=='on')
 //        {span.innerHTML=numElem+')   kwas borowy'}else{
@@ -719,6 +720,9 @@ function generowanieFormularzaDoEdycji (item){
             input.setAttribute('class','elFormDelete')
             label.setAttribute('class','elFormDelete')
             input.setAttribute('id',`${skl}-${item}`)
+            input.setAttribute('type','number')
+            input.setAttribute("min","0")
+            input.setAttribute('max',"99999")
             console.log('idwimpucie',`${skl}-${item}`)
             const br=document.createElement('br')
             br.setAttribute('class','elFormDelete')
@@ -823,7 +827,12 @@ function oblEt(){ $.ajax({
             success : function(response){
             console.log('działa et')
             const oblEtText=document.getElementById( "ol-et-text")
-            oblEtText.innerHTML=response.tabela
+
+            oblEtText.innerHTML=''
+            const p=document.createElement('p')
+            p.innerHTML= response.tabela['obl']+response.tabela['obl1']
+            oblEtText.appendChild(p)
+            MathJax.typesetPromise()
             },
             error : function(response){},
             })

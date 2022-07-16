@@ -158,6 +158,8 @@ def formJson (request,skl):
     skladnik_z_ad = None
     jest_aa_ad = False
     skladnik_z_aa_ad = None
+    jest_qs = False
+    skladnik_z_qs = None
     for i in all:
         if i.ad == 'on':
             jest_ad = True
@@ -165,8 +167,11 @@ def formJson (request,skl):
         elif i.aa_ad == 'on':
             jest_aa_ad = True
             skladnik_z_aa_ad = i
+        elif i.qs == 'on':
+            jest_qs = True
+            skladnik_z_qs = i
     ############# kończenie receptury jeżeli zawiera składnik z ad lun aa ad ####################################
-    if  (skladnik_z_ad!= None and jest_ad ==True) or (skladnik_z_aa_ad!= None and jest_aa_ad ==True):
+    if  (skladnik_z_ad!= None and jest_ad ==True) or (skladnik_z_aa_ad!= None and jest_aa_ad ==True)or (skladnik_z_qs!= None and jest_qs ==True):
             datadict=['receptura zakończona. Ostatni skladnik zawiera ad lub aa ad. Aby konynuować musisz usunąć bądź edytować ostatni skladnik ']
 
 
@@ -804,9 +809,12 @@ def obliczeniaEt(request,sklId):
 
     receptura = Receptura.objects.get(id=int(sklId))
     obl=''
-    obl+='Ilość potrzebnych gramów etanolu '+ etanol.pozadane_stezenie+'° wynosi '+etanol.gramy+' \n'
-    obl+='Stężenie etanolu jakim dysponujeny  wynosi '+etanol.uzyte_stezenie+'° t.j. '+ tabela_etanolowa[etanol.uzyte_stezenie]+'% w stężeniu wagowym'+'\n'
-    obl+=etanol.gramy+' x '+tabela_etanolowa[etanol.pozadane_stezenie]+'               '+etanol.uzyte_stezenie+' \n'
-    obl += 'to be continued'+' \n'
 
-    return JsonResponse({'tabela': obl})
+    obl+='\\[\\begin{flalign}Ilość\;potrzebnych\;gramów\;etanolu \;'+ etanol.pozadane_stezenie+'° \;(\;t.j.\;'+ tabela_etanolowa[etanol.pozadane_stezenie]+'\%\;)\; wynosi \;'+etanol.gramy+'g\\end{flalign}\\]'
+    obl+='\\[\\begin{flalign}&Stężenie\;etanolu\;jakim\;dysponujeny\;wynosi\;'+etanol.uzyte_stezenie+'° t.j.\; '+ tabela_etanolowa[etanol.uzyte_stezenie]+'\%\; w\;ujęciu\;wagowym'+'\\end{flalign}\\]'
+
+    #obl="$$\\begin{aligned} 2x - 4 &= 6 \\\\ 2x &= 10 \\\\ x &= 5 \end{aligned}$$"
+    obl1=''
+    obl1 += '\\[{ilość\;potrzebnego\;etanolu\; '+tabela_etanolowa[etanol.uzyte_stezenie]+'\% } = {\LARGE'+tabela_etanolowa[etanol.pozadane_stezenie]+'  * '+etanol.gramy+ '\\over\Large'+ tabela_etanolowa[etanol.uzyte_stezenie]+'}={'+ etanol.ilosc_etanolu +'\;g }\\]'
+    obl1 += '\\[\\begin{flalign}Ilość\;potrzebnych\;gramów\;wody\;wynosi:\; \; ' + etanol.gramy + '-' + etanol.ilosc_etanolu +'=' +etanol.ilosc_wody_do_etanolu+'\; g\\end{flalign}\\]'
+    return JsonResponse({'tabela': {'obl':obl,'obl1':obl1}})

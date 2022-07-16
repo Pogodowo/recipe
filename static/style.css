@@ -1,6 +1,4 @@
-.red {
-color: green
-}
+
 
 * { box-sizing: border-box; }
 body {
@@ -65,21 +63,27 @@ float:left;
 
 }
 
-.list-group-skl{ /*to jakby nie działa */
+.list-group-skl{ /*karta ogółem */
+
 border: 1px solid #333333;
-  border-radius: 25px;
-  overflow: hidden;
-  background: #03e8fc;
+  border-radius: 10px;
+  overflow: hidden;}
 
-li{
-border: 10px solid #333333;
-  border-radius: 25px;
+
+
+
+ul{
+  padding-left: 0rem
 }
 
 }
-.list-group-item{ /*górna część karty parametrów składnika */
-background: #e9f0ed;
-border-radius:0px;
+.my-card-header{ /*górna część karty parametrów składnika*/
+background-color: red !important;
+}
+
+
+span {
+padding:3px;
 }
 .flex-container{ /*dolna część karty parametrów składnika */
 
@@ -87,6 +91,8 @@ display:flex;
 flex-direction: row;
 flex-wrap: wrap;
 float:left;
+padding: 5px;
+width: 50rem;
 border-radius:0px;
 background: #545794;
 }
@@ -98,7 +104,7 @@ background: #bcc77f;
 margin:5px;
 color: black;
 margin: 2px;
-padding:6px;
+padding:7px;
 border-radius:5px;
 font-size: 20px;
 flex-wrap: nowrap;
@@ -314,9 +320,7 @@ background-color: #e4ede4;
 }
 
 
-.my-col{
 
-}
 
 my-container{
 left: 0 ;
@@ -377,4 +381,15 @@ font-size: 25px;}
 #id-modal-content{
  width: 850px;
   margin: auto;
+}
+
+#id-modal-et-content {
+ width: 800px;
+  margin: auto;
+  text-align: left !important;
+
+}
+
+.MathJax_Display {
+  text-align: left !important;
 }
