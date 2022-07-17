@@ -1,0 +1,4 @@
+.recipe/env
+rec_calc/
+_pycache_
+*.sqlite3
