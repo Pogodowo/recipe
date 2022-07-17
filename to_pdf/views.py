@@ -121,16 +121,16 @@ def to_pdf(request,pk):
     y=600
     count=1
     for i in Skladniki:
-        p.setFont('polishFont', 13)
+        p.setFont('AbhayaLibre-Regular', 13)
         p.drawString(x, y, str(count)+')  '+i.skladnik)
         p.line(x+250,y-5,x,y-5)
         count=count+1
-        p.setFont('polishFont', 10)
+        p.setFont('AbhayaLibre-Regular', 10)
         y=y-20
         p.drawString(x, y, 'dane z recepty:')
         if i.ilosc_na_recepcie!='':
             y=y-10
-            p.setFont('polishFont', 11)
+            p.setFont('AbhayaLibre-Regular', 11)
             p.drawString(x, y,  'jednostka na recepcie: '+i.jednostka_z_recepty+'   '+'ilość: '+ i.ilosc_na_recepcie)
         if i.producent!='0':
             y = y - 10
@@ -144,7 +144,10 @@ def to_pdf(request,pk):
         a=0
         for j in range(len(dane[i.skladnik])):
             parametr=dane[i.skladnik][j]
-            p.drawString(x, y, parametr+':'+getattr(i, parametr ))
+            if parametr in table_dict:
+                p.drawString(x, y, table_dict[parametr]+' : '+getattr(i, parametr ))
+            else:
+                p.drawString(x, y, parametr + ' : ' + getattr(i, parametr))
             y=y-10
 
 

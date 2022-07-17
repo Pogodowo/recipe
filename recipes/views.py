@@ -255,7 +255,7 @@ def dodajsklJson (request,sklId):
                 #=================przelicanie witamin======================================
                 print('new_skl.skladnik',new_skl.skladnik)
                 sys.stdout.flush()
-                if (new_skl.skladnik=='Vitaminum A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik') and to_updade['ilosc_na_recepcie']!='' :
+                if (new_skl.skladnik=='Witamina A' or new_skl.skladnik=='witamina E' or new_skl.skladnik=='Oleum Menthae piperitae' or new_skl.skladnik=='Nystatyna'or new_skl.skladnik=='Mocznik') and to_updade['ilosc_na_recepcie']!='' :
                    to_updade=PrzeliczanieWit(dodanySkladnik,to_updade,receptura.rodzaj,receptura.ilosc_czop_glob)
                 print('to_ptade bo nie wiem gdzie te gramy',to_updade)
                 sys.stdout.flush()
@@ -742,7 +742,7 @@ def edytujsklJson (request,sklId):
                 # if 'dodaj_wode' in to_updade:
                 #     to_updade['aa_ad_gramy']=to_updade['gramy']
                 # to_updade=Przeliczanie(dodanySkladnik,to_updade)
-                if to_edit['skladnik'] == 'Vitaminum A' or to_edit['skladnik'] == 'witamina E' or to_edit['skladnik'] == 'Oleum Menthae piperitae' or to_edit['skladnik'] == 'Nystatyna':
+                if to_edit['skladnik'] == 'Witamina A' or to_edit['skladnik'] == 'witamina E' or to_edit['skladnik'] == 'Oleum Menthae piperitae' or to_edit['skladnik'] == 'Nystatyna':
                     to_edit = PrzeliczanieWit(to_edit['skladnik'], to_edit, receptura.rodzaj, receptura.ilosc_czop_glob)
                     print('to_edit', to_edit, 'to_updade,rodzaj,ilosc', 'receptura',sklreceptury, receptura.rodzaj, receptura.ilosc_czop_glob)
                     sys.stdout.flush()
@@ -783,7 +783,7 @@ def obliczeniaOlCac(request,sklId):
     temp='$8^{a}'
     for i in skladniki:
         if i.skladnik!='Oleum Cacao':
-            obl = obl +  " + "+i.gramy +'g. '+ get_super('('+'ilosc gramow '+i.skladnik+ ')') + " x " +str(wspolczynniki_wyparcia[i.skladnik])+  ' '+get_super('('+'wspolczynnik wypacia '+i.skladnik+ ')')
+            obl = obl +  " + "+i.gramy +'g '+ get_super('('+'ilosc gramow '+i.skladnik+ ')') + " x " +str(wspolczynniki_wyparcia[i.skladnik])+  ' '+get_super('('+'wspolczynnik wypacia '+i.skladnik+ ')')
     obl = obl + ' = '
     for i in skladniki:
         if i.skladnik!='Oleum Cacao':
@@ -792,9 +792,9 @@ def obliczeniaOlCac(request,sklId):
     obl= obl +' = '
     for i in skladniki:
         if i.skladnik == 'Oleum Cacao' and i.czy_powiekszyc_mase_oleum == 'off':
-            obl = obl + i.gramy+'.g'
+            obl = obl + i.gramy+'g'
         elif i.skladnik == 'Oleum Cacao' and i.czy_powiekszyc_mase_oleum == 'on':
-            obl = obl + str(float(i.gramy)-float(receptura.masa_docelowa_czop_glob))+'.g + '+receptura.masa_docelowa_czop_glob+'g.'+get_super('(masa dodatkowego czopka/globulki)') +'= '+i.gramy+'g.'
+            obl = obl + str(float(i.gramy)-float(receptura.masa_docelowa_czop_glob))+'g + '+receptura.masa_docelowa_czop_glob+'g'+get_super('(masa dodatkowego czopka/globulki)') +'= '+i.gramy+'g'
 
 
 

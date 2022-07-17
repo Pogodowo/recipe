@@ -1,7 +1,9 @@
 const listaSkladnikowDrop=document.getElementById("lista-dropdown" )
-var ingridients=["Vitaminum A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
-,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%','Maść Cholesterolowa',
-'Balsam Peruwiański','Ichtiol','Bizmutu węglan zasadowy','Bizmutu azotan zasadowy']
+var ingridients=['3% roztwór kwas borowy', 'Anestezyna', 'Balsam Peruwiański', 'Bizmutu azotan zasadowy',
+'Bizmutu węglan zasadowy', 'Detreomycyna', 'Efedryna', 'Erytromycna', 'Etanol', 'Euceryna', 'Gliceryna 86%',
+'Hascobaza', 'Hydrokortyzon', 'Ichtiol', 'Lanolina', 'Maść Cholesterolowa', 'Metronidazol', 'Mocznik', 'Neomycyna',
+'Nystatyna', 'Oleum Cacao', 'Oleum Menthae piperitae',
+'Prokaina', 'Rezorcyna', 'Witamina A', 'Wazelina biała', 'Wazelina żółta', 'Woda destylowana', 'witamina E','Tlenek Cynku','Olej Rycynowy','Papaweryna','Mentol','Laktoza','Kwas Salicylowy']
 function myFunction(){}
 
 function listaSkladnikowDropFunc(){

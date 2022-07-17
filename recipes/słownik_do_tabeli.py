@@ -8,6 +8,7 @@ table_dict={'jednostka_z_recepty':'jednostka z recepty','ilosc_na_recepcie':'ilo
 'UI_w_mg': 'ilość jednostek  w miligramie','masc':'maść','gramy_roztworu':'gramy roztworu','jednostki':'jednostki','krople':'krople',
 'receptura_plynna_wewnetrzna':'receptura płynna wewnętrzna','receptura_plynna_zewnetrzna':'receptura płynna zewnętrzna',
             'calkowita_ilosc_gramow_wody':'całkowita ilośc gramów wody','ilosc_wody_do_etanolu':'ilośc gramów wody do etanolu',
+            'woda_kwas_borowy':'ilość wody potrzebna do sporządzenia roztworu kwasu borowego','ilosc_kwasu_borowego_do_roztworu':'ilość kwasu borowego'
 
             }
 

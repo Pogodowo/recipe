@@ -4,7 +4,7 @@ const Receptury = document.getElementsByClassName('pk-class')
 
  for (let rec of Receptury){
                             console.log('rec',rec)
-                            var skl=rec.innerText;
+                            var skl=rec.title;
                             recIng(skl)}
 
 function recIng(skl){
@@ -68,6 +68,11 @@ function recIng(skl){
             }else if (param['rodzaj']==='masc'){
             div=document.createElement('div');
             div.innerHTML='<br><br>M.f. Ung. ';
+            tabelaDocelowa.appendChild(div)
+            }
+            else if (param['rodzaj']==='receptura_plynna_wewnetrzna' || param['rodzaj']==='receptura_plynna_zewnetrzna'){
+            div=document.createElement('div');
+            div.innerHTML='<br>M.f. Sol. ';
             tabelaDocelowa.appendChild(div)
             }
 

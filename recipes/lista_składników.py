@@ -1,4 +1,4 @@
-data={'Vitaminum A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki'],'ilosc_na_recepcie',['producent','Hasco 45000j.m./ml','Medana 50000j.m./ml'],['gestosc','1.082','1.083','1.0','1.14','1.145','1.146','1.147','1.148','1.149','1.50']],
+data={'Witamina A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki'],'ilosc_na_recepcie',['producent','Hasco 45000j.m./ml','Medana 50000j.m./ml'],['gestosc','1.082','1.083','1.0','1.14','1.145','1.146','1.147','1.148','1.149','1.50']],
       'witamina E':[['jednostka_z_recepty','gramy_roztworu','krople','gramy_czystej_vit_e'],'ilosc_na_recepcie',['producent','Hasco 0,3g/ml','Medana 0,3g/ml'],['gestosc','0.928','0.929','0.930','0.931']],
       'Hydrokortyzon':['ilosc_na_recepcie','aa'],
       'Detreomycyna':['ilosc_na_recepcie','aa'],
@@ -21,6 +21,9 @@ data={'Vitaminum A':[['jednostka_z_recepty','gramy_roztworu','krople','jednostki
       'Kwas borowy':['ilosc_na_recepcie','aa'],
       'Maść Cholesterolowa':['ilosc_na_recepcie','aa','aa_ad','ad'],
       'Balsam Peruwiański':['ilosc_na_recepcie'],
-      'Ichtiol':['ilosc_na_recepcie'],'Bizmutu węglan zasadowy':['ilosc_na_recepcie'],'Bizmutu azotan zasadowy':['ilosc_na_recepcie']
-
+      'Ichtiol':['ilosc_na_recepcie'],'Bizmutu węglan zasadowy':['ilosc_na_recepcie'],'Bizmutu azotan zasadowy':['ilosc_na_recepcie'],
+      'Prokaina':['ilosc_na_recepcie'],'Anestezyna':['ilosc_na_recepcie'],'Hascobaza':['ilosc_na_recepcie','aa','aa_ad','ad'],
+      "Neomycyna":['ilosc_na_recepcie'],'Efedryna':['ilosc_na_recepcie'],'Erytromycna':['ilosc_na_recepcie'],
+'Tlenek Cynku':['ilosc_na_recepcie'],'Olej Rycynowy':['ilosc_na_recepcie'],'Papaweryna':['ilosc_na_recepcie'],'Mentol':['ilosc_na_recepcie'],'Laktoza':['ilosc_na_recepcie'],
+'Kwas Salicylowy':['ilosc_na_recepcie']
       }

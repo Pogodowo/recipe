@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import os,sys,environ
+import os,sys,environ , django_heroku
 
 env = environ.Env()
 # reading .env file
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL='mojerec'
+#LOGIN_URL='home'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 MIDDLEWARE = [
@@ -145,3 +146,5 @@ EMAIL_HOST_USER =env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 print('EMAIL_HOST_USER', EMAIL_HOST_USER,'EMAIL_HOST_PASSWORD',EMAIL_HOST_PASSWORD)
 sys.stdout.flush()
+
+django_heroku.settings(locals())

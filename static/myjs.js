@@ -37,9 +37,9 @@ toPdfButton=document.getElementById("toPdfButton")
 
 updateTable()
 
-var ingridients=["Vitaminum A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
+var ingridients=["Witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina biała","Wazelina żółta","Mocznik","Woda destylowana","Etanol"
 ,"Oleum Cacao",'Oleum Menthae piperitae','Nystatyna','3% roztwór kwas borowy','Detreomycyna','Rezorcyna','Euceryna','Lanolina','Gliceryna 86%','Maść Cholesterolowa',
-'Balsam Peruwiański','Ichtiol','Bizmutu węglan zasadowy','Bizmutu azotan zasadowy',]
+'Balsam Peruwiański','Ichtiol','Bizmutu węglan zasadowy','Bizmutu azotan zasadowy','Prokaina','Anestezyna','Hascobaza',"Neomycyna",'Efedryna','Erytromycna','Tlenek Cynku','Olej Rycynowy','Papaweryna','Mentol','Laktoza','Kwas Salicylowy']
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -727,7 +727,7 @@ function generowanieFormularzaDoEdycji (item){
             const br=document.createElement('br')
             br.setAttribute('class','elFormDelete')
             label.textContent=dict[item]
-            if(response.datadict.values[item]!='' || response.datadict.values['qs']=='on'){
+            if(response.datadict.values[item]!='' || response.datadict.values['qs']=='on'|| response.datadict.values['show']!=false){
             input.value=response.datadict.values[item]
             formBox.appendChild(label)
             formBox.appendChild(input)
